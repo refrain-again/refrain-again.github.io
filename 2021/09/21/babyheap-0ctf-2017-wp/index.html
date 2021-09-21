@@ -4,6 +4,9 @@
   <meta charset="utf-8">
   
   
+  <meta name="description" content="先贴源码
+1.源码from pwn import *#context.log_level = “debug”p = remote(‘node4.buuoj.cn’,26841)#p = process(‘./babyheap_0ctf_2017’)elf = ELF(‘./babyheap_0ctf" />
+  
 
   
   
@@ -11,13 +14,17 @@
   
   
   
-  <title>refrain的blog</title>
+  <title>babyheap_0ctf_2017-wp | refrain的blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="refrain的blog">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="先贴源码 1.源码from pwn import *#context.log_level &#x3D; “debug”p &#x3D; remote(‘node4.buuoj.cn’,26841)#p &#x3D; process(‘.&#x2F;babyheap_0ctf_2017’)elf &#x3D; ELF(‘.&#x2F;babyheap_0ctf_2017’)one_gadget &#x3D; 0x4526a#libc &#x3D; ELF(‘&#x2F;lib&#x2F;x86_6">
+<meta property="og:type" content="article">
+<meta property="og:title" content="babyheap_0ctf_2017-wp">
+<meta property="og:url" content="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/index.html">
 <meta property="og:site_name" content="refrain的blog">
+<meta property="og:description" content="先贴源码 1.源码from pwn import *#context.log_level &#x3D; “debug”p &#x3D; remote(‘node4.buuoj.cn’,26841)#p &#x3D; process(‘.&#x2F;babyheap_0ctf_2017’)elf &#x3D; ELF(‘.&#x2F;babyheap_0ctf_2017’)one_gadget &#x3D; 0x4526a#libc &#x3D; ELF(‘&#x2F;lib&#x2F;x86_6">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-09-21T15:45:03.000Z">
+<meta property="article:modified_time" content="2021-09-21T16:18:20.575Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -62,17 +69,15 @@
 </header>
 
       <div id="main" class="wrapper">
-        <div id="primary" class="site-content"><div id="content" role="main">
-  
-    <article id="post-babyheap-0ctf-2017-wp" class="post-babyheap-0ctf-2017-wp post type-post status-publish format-standard hentry">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-babyheap-0ctf-2017-wp" class="post-babyheap-0ctf-2017-wp post type-post status-publish format-standard hentry">
     <!---->
 
       <header class="entry-header">
         
         
   
-    <h1 class="entry-title">
-      <a class="article-title" href="/2021/09/21/babyheap-0ctf-2017-wp/">babyheap_0ctf_2017-wp</a>
+    <h1 class="entry-title article-title">
+      babyheap_0ctf_2017-wp
     </h1>
   
 
@@ -115,148 +120,20 @@
 </article>
 
 
-
-
-
-
-  
-    <article id="post-test" class="post-test post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2021/09/21/test/">test</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/test/" data-id="cktua7qhb0003qwvk3sjuhcof" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2021/09/21/test/">
-    <time datetime="2021-09-21T15:30:20.000Z" class="entry-date">
-        2021-09-21
-    </time>
-</a>
+    
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
     
     
-    </footer>
-</article>
-
-
-
-
-
-
-  
-    <article id="post-pwn-buuctf-rip-简单栈溢出-详细wp" class="post-pwn-buuctf-rip-简单栈溢出-详细wp post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/">pwn buuctf rip 简单栈溢出 详细wp</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://example.com/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/" data-id="cktua7qh90001qwvkh8ova16k" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <p>buu上rip这道题作为pwn里面最简单的栈题，意外的发现网上很多wp因为远程环境的更新，需要维持堆栈平衡，所以原先老旧的wp在本地可以打通，但在远程却打不通，甚至很多人的blog就拿着原本可以打通的wp贴上去，自己都没有实操一遍，我相信很多人都和我一样因为这些wp对初期学习造成了不小的困扰，特别是初期自己底层知识什么都不懂的时候，看到一些甚至是在胡乱解释的wp，就不知道该如何进行后续的学习了，所以今天我通过近两天的摸索，写一篇尽量正确的wp，因为我自己水平有限，一些细节的地方可能会有错误，但大的思路一定是对的，希望能给大家提供帮助，其中用到了别人ppt里现成的图，本人仅用作学习交流，侵删。</p>
-        
-          <p class="article-more-link">
-            <a href="/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/#more" class="more-link">More <span class="meta-nav">→</span></a>
-          </p>
-        
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/">
-    <time datetime="2021-07-11T19:53:18.000Z" class="entry-date">
-        2021-07-12
-    </time>
-</a>
+        <span class="nav-next"><a href="/2021/09/21/test/" rel="next">test <span class="meta-nav">→</span></a></span>
     
-    
-    </footer>
-</article>
+</nav><!-- .nav-single -->
 
 
 
 
 
 
-  
-    <article id="post-hello-world" class="post-hello-world post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2021/07/09/hello-world/">Hello World</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://example.com/2021/07/09/hello-world/" data-id="cktua7qh50000qwvk4wms99ps" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-        
-          <p class="article-more-link">
-            <a href="/2021/07/09/hello-world/#more" class="more-link">More <span class="meta-nav">→</span></a>
-          </p>
-        
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2021/07/09/hello-world/">
-    <time datetime="2021-07-09T08:06:37.518Z" class="entry-date">
-        2021-07-09
-    </time>
-</a>
-    
-    
-    </footer>
-</article>
-
-
-
-
-
-
-  
-  
 
 </div></div>
         <div id="secondary" class="widget-area" role="complementary">
