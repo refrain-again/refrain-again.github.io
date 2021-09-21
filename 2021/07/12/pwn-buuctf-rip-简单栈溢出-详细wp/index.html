@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   
   
-  <meta name="description" content="buu上rip这道题作为pwn里面最简单的栈题，意外的发现网上很多wp因为远程环境的更新，需要维持堆栈平衡，所以原先老旧的wp在本地可以打通，但在远程却打不通，甚至很多人的blog就拿着原本可以打通的wp贴上去，自己都没有实操一遍，我相信很多人都和我一样因为这些wp对初期学习造成了不小的困扰，特别是" />
+  <meta name="description" content="buu上rip这道题作为pwn里面最简单的栈题，意外的发现网上很多wp因为远程环境的更新，需要维持堆栈平衡，所以原先老旧的wp在本地可以打通，但在远程却打不通，甚至很多人的blog就拿着原本可以打通的wp贴上去，自己都没有实操一遍，我相信很多人都和我一样因为这些wp对初期学习造成了不小的困扰，特别是初期自己底层知识什么都不懂的时候，看到一些甚至是在胡乱解释的wp，就不知道该如何进行后续的学习了，所以今天我通过近两天的摸索，写一篇尽量正确的wp，因为我自己水平有限，一些细节的地方可能会有错误，但大的思路一定是对的，希望能给大家提供帮助，其中用到了别人ppt里现成的图，本人仅用作学习交流，侵删。" />
   
 
   
@@ -36,7 +36,7 @@
 <meta property="og:image" content="http://example.com/6.png">
 <meta property="og:image" content="http://example.com/14.png">
 <meta property="article:published_time" content="2021-07-11T19:53:18.000Z">
-<meta property="article:modified_time" content="2021-07-12T02:50:05.718Z">
+<meta property="article:modified_time" content="2021-09-21T15:07:02.572Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/15.png">
@@ -97,13 +97,15 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/" data-id="cktu7mlhh00014svk2hdwfwzw" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/" data-id="cktu7o1su000164vkcwhedre9" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
     <div class="entry-content">
       
         <p>buu上rip这道题作为pwn里面最简单的栈题，意外的发现网上很多wp因为远程环境的更新，需要维持堆栈平衡，所以原先老旧的wp在本地可以打通，但在远程却打不通，甚至很多人的blog就拿着原本可以打通的wp贴上去，自己都没有实操一遍，我相信很多人都和我一样因为这些wp对初期学习造成了不小的困扰，特别是初期自己底层知识什么都不懂的时候，看到一些甚至是在胡乱解释的wp，就不知道该如何进行后续的学习了，所以今天我通过近两天的摸索，写一篇尽量正确的wp，因为我自己水平有限，一些细节的地方可能会有错误，但大的思路一定是对的，希望能给大家提供帮助，其中用到了别人ppt里现成的图，本人仅用作学习交流，侵删。</p>
+<span id="more"></span>
+
 <p>ps：因为这里是作为本人的学习笔记，所以前面会有大量的关于栈如何工作的基础内容，不想看的可以直接跳过去看最后的wp</p>
 <h1 id="1-Stack-栈-的工作原理"><a href="#1-Stack-栈-的工作原理" class="headerlink" title="1.Stack(栈)的工作原理"></a>1.Stack(栈)的工作原理</h1><h2 id="1-1C语言内存分布"><a href="#1-1C语言内存分布" class="headerlink" title="1.1C语言内存分布"></a>1.1C语言内存分布</h2><p>首先我们来看当一个c语言函数在执行的时候，操作系统是如何调度内存将数据存放并且完成相关函数操作的!</p>
 <p><img src="/15.png" alt="15"></p>
