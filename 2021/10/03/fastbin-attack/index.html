@@ -4,10 +4,7 @@
   <meta charset="utf-8">
   
   
-  <meta name="description" content="前言本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧
-逆向
-老样子，先执行文件看一下大概功能，大概是这6个，然后扔进32位的ida
-找到main函数，发现他就是执行了这个函数将他命名位menu菜单函数，这题也是典型的菜" />
+  <meta name="description" content="前言本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧" />
   
 
   
@@ -18,12 +15,12 @@
   
   <title>fastbin attack | refrain的blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前言本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧 逆向 老样子，先执行文件看一下大概功能，大概是这6个，然后扔进32位的ida 找到main函数，发现他就是执行了这个函数将他命名位menu菜单函数，这题也是典型的菜单题。 功能大概添加武器，展示武器，订购武器，为你的订购留下信息，最后就是展示大概情况吧。  我们将">
+  <meta name="description" content="前言本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧">
 <meta property="og:type" content="article">
 <meta property="og:title" content="fastbin attack">
 <meta property="og:url" content="http://example.com/2021/10/03/fastbin-attack/index.html">
 <meta property="og:site_name" content="refrain的blog">
-<meta property="og:description" content="前言本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧 逆向 老样子，先执行文件看一下大概功能，大概是这6个，然后扔进32位的ida 找到main函数，发现他就是执行了这个函数将他命名位menu菜单函数，这题也是典型的菜单题。 功能大概添加武器，展示武器，订购武器，为你的订购留下信息，最后就是展示大概情况吧。  我们将">
+<meta property="og:description" content="前言本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/1-1633514214756.png">
 <meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/2-1633514581457.png">
@@ -34,7 +31,7 @@
 <meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/7-1633617863879.png">
 <meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/8.png">
 <meta property="article:published_time" content="2021-10-03T14:35:36.000Z">
-<meta property="article:modified_time" content="2021-10-07T14:50:29.146Z">
+<meta property="article:modified_time" content="2021-10-07T14:52:10.460Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/10/03/fastbin-attack/1-1633514214756.png">
@@ -95,13 +92,15 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/10/03/fastbin-attack/" data-id="ckuh24lai0001qkvk5pj1cvoq" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/10/03/fastbin-attack/" data-id="ckuh26lp20002ywvk947o3s6l" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
     <div class="entry-content">
       
         <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧</p>
+<span id="more"></span>
+
 <h1 id="逆向"><a href="#逆向" class="headerlink" title="逆向"></a>逆向</h1><p><img src="/2021/10/03/fastbin-attack/1-1633514214756.png" alt="1"></p>
 <p>老样子，先执行文件看一下大概功能，大概是这6个，然后扔进32位的ida</p>
 <p>找到main函数，发现他就是执行了这个函数将他命名位menu菜单函数，这题也是典型的菜单题。</p>

