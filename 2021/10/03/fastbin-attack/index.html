@@ -4,6 +4,11 @@
   <meta charset="utf-8">
   
   
+  <meta name="description" content="前言本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧
+逆向
+老样子，先执行文件看一下大概功能，大概是这6个，然后扔进32位的ida
+找到main函数，发现他就是执行了这个函数将他命名位menu菜单函数，这题也是典型的菜" />
+  
 
   
   
@@ -11,15 +16,28 @@
   
   
   
-  <title>refrain的blog</title>
+  <title>fastbin attack | refrain的blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="refrain的blog">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="前言本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧 逆向 老样子，先执行文件看一下大概功能，大概是这6个，然后扔进32位的ida 找到main函数，发现他就是执行了这个函数将他命名位menu菜单函数，这题也是典型的菜单题。 功能大概添加武器，展示武器，订购武器，为你的订购留下信息，最后就是展示大概情况吧。  我们将">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fastbin attack">
+<meta property="og:url" content="http://example.com/2021/10/03/fastbin-attack/index.html">
 <meta property="og:site_name" content="refrain的blog">
+<meta property="og:description" content="前言本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧 逆向 老样子，先执行文件看一下大概功能，大概是这6个，然后扔进32位的ida 找到main函数，发现他就是执行了这个函数将他命名位menu菜单函数，这题也是典型的菜单题。 功能大概添加武器，展示武器，订购武器，为你的订购留下信息，最后就是展示大概情况吧。  我们将">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/1-1633514214756.png">
+<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/2-1633514581457.png">
+<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/3-1633515155557.png">
+<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/4-1633515069147.png">
+<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/6.png">
+<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/5.png">
+<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/7-1633617863879.png">
+<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/8.png">
+<meta property="article:published_time" content="2021-10-03T14:35:36.000Z">
+<meta property="article:modified_time" content="2021-10-07T14:50:29.146Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/10/03/fastbin-attack/1-1633514214756.png">
   
   
     <link rel="icon" href="/css/images/favicon.ico">
@@ -62,17 +80,15 @@
 </header>
 
       <div id="main" class="wrapper">
-        <div id="primary" class="site-content"><div id="content" role="main">
-  
-    <article id="post-fastbin-attack" class="post-fastbin-attack post type-post status-publish format-standard hentry">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-fastbin-attack" class="post-fastbin-attack post type-post status-publish format-standard hentry">
     <!---->
 
       <header class="entry-header">
         
         
   
-    <h1 class="entry-title">
-      <a class="article-title" href="/2021/10/03/fastbin-attack/">fastbin attack</a>
+    <h1 class="entry-title article-title">
+      fastbin attack
     </h1>
   
 
@@ -143,158 +159,20 @@
 </article>
 
 
-
-
-
-
-  
-    <article id="post-babyheap-0ctf-2017-wp" class="post-babyheap-0ctf-2017-wp post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2021/09/21/babyheap-0ctf-2017-wp/">babyheap_0ctf_2017-wp</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/" data-id="ckuh24lad0000qkvk0qdi0tg9" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <p> 前言：如果按照buu的pwn题排序，这题虽然是堆的入门题，但是难度较之前无脑ROP的一堆栈题难度上升还是挺大的，阅读本文需要一定的对于chunk的基础。因为我个人在做题的时候，刚开始碰到那些alloc来free掉的有些不懂为什么要这样，找的博客也很少有说大概思路的，所以我就想把细致的思路用文字描述一下，然后我有点懒，也懒得再动手调一遍了，更懒得放图，所以放两个参考博客，都是我认为写的比较详细的博客，思路其实是一样的，payload稍微有点偏差，大家可以去看看，说不定你们就不想看我的博客了（::&gt;_&lt;::），然后就是这样吧，还是想强调一下本文多文字思路，几乎无图。因为懒，所以想要真正看懂这题还是要去多看看我下面放的这两个参考博客吧。</p>
-<p>也不要说我没用，我怎么说也帮你在一堆讲的不太行的wp里放出了两个还行的。</p>
-<p>总的来说博客2更详细一点，稍微更推荐博客2一点，博客1在malloc_hook那边动手调了一下，各有所长吧，肯定比大部分要搜到的奇怪wp要好很多。</p>
-<p>参考博客1：<a target="_blank" rel="noopener" href="http://pearcechn.top/2021/02/02/[writeup]buuctf-pwnheap_1/">http://pearcechn.top/2021/02/02/%E3%80%90writeup%E3%80%91buuctf-pwnheap_1/</a></p>
-<p>参考博客2：<a target="_blank" rel="noopener" href="https://blog.csdn.net/xieyichensss/article/details/116071092">https://blog.csdn.net/xieyichensss/article/details/116071092</a></p>
-<p><strong>特别提醒，源码里面的‘与“不知道为什么复制粘贴过来就变成奇怪的格式，所以除非你愿意一个个改’与”，不建议使用本文源码，上面博客的源码与本文思路相同，可以参考</strong></p>
-        
-          <p class="article-more-link">
-            <a href="/2021/09/21/babyheap-0ctf-2017-wp/#more" class="more-link">More <span class="meta-nav">→</span></a>
-          </p>
-        
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2021/09/21/babyheap-0ctf-2017-wp/">
-    <time datetime="2021-09-21T15:45:03.000Z" class="entry-date">
-        2021-09-21
-    </time>
-</a>
+    
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
     
     
-    </footer>
-</article>
-
-
-
-
-
-
-  
-    <article id="post-pwn-buuctf-rip-简单栈溢出-详细wp" class="post-pwn-buuctf-rip-简单栈溢出-详细wp post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/">pwn buuctf rip 简单栈溢出 详细wp</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://example.com/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/" data-id="ckuh24lal0002qkvk7dec9p96" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <p>buu上rip这道题作为pwn里面最简单的栈题，意外的发现网上很多wp因为远程环境的更新，需要维持堆栈平衡，所以原先老旧的wp在本地可以打通，但在远程却打不通，甚至很多人的blog就拿着原本可以打通的wp贴上去，自己都没有实操一遍，我相信很多人都和我一样因为这些wp对初期学习造成了不小的困扰，特别是初期自己底层知识什么都不懂的时候，看到一些甚至是在胡乱解释的wp，就不知道该如何进行后续的学习了，所以今天我通过近两天的摸索，写一篇尽量正确的wp，因为我自己水平有限，一些细节的地方可能会有错误，但大的思路一定是对的，希望能给大家提供帮助，其中用到了别人ppt里现成的图，本人仅用作学习交流，侵删。</p>
-        
-          <p class="article-more-link">
-            <a href="/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/#more" class="more-link">More <span class="meta-nav">→</span></a>
-          </p>
-        
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/">
-    <time datetime="2021-07-11T19:53:18.000Z" class="entry-date">
-        2021-07-12
-    </time>
-</a>
+        <span class="nav-next"><a href="/2021/09/21/babyheap-0ctf-2017-wp/" rel="next">babyheap_0ctf_2017-wp <span class="meta-nav">→</span></a></span>
     
-    
-    </footer>
-</article>
+</nav><!-- .nav-single -->
 
 
 
 
 
 
-  
-    <article id="post-hello-world" class="post-hello-world post type-post status-publish format-standard hentry">
-    <!---->
-
-      <header class="entry-header">
-        
-        
-  
-    <h1 class="entry-title">
-      <a class="article-title" href="/2021/07/09/hello-world/">Hello World</a>
-    </h1>
-  
-
-        
-        <div class="comments-link">
-            
-            <a href="javascript:void(0);" data-url="http://example.com/2021/07/09/hello-world/" data-id="ckuh24lal0003qkvk0tfd3ibz" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
-        </div><!-- .comments-link -->
-      </header><!-- .entry-header -->
-
-    <div class="entry-content">
-      
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-        
-          <p class="article-more-link">
-            <a href="/2021/07/09/hello-world/#more" class="more-link">More <span class="meta-nav">→</span></a>
-          </p>
-        
-      
-    </div><!-- .entry-content -->
-
-    <footer class="entry-meta">
-    <a href="/2021/07/09/hello-world/">
-    <time datetime="2021-07-09T08:06:37.518Z" class="entry-date">
-        2021-07-09
-    </time>
-</a>
-    
-    
-    </footer>
-</article>
-
-
-
-
-
-
-  
-  
 
 </div></div>
         <div id="secondary" class="widget-area" role="complementary">
