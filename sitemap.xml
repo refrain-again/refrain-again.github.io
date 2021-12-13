@@ -102,7 +102,7 @@
 
   <url>
     <loc>http://example.com/</loc>
-    <lastmod>2021-11-18</lastmod>
+    <lastmod>2021-12-13</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -110,7 +110,7 @@
   
   <url>
     <loc>http://example.com/tags/ctfwiki/</loc>
-    <lastmod>2021-11-18</lastmod>
+    <lastmod>2021-12-13</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
